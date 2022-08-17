@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:weather_application/weather.dart';
 import 'package:ndialog/ndialog.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(const MyApp());
 
@@ -104,10 +105,26 @@ class _HomePageState extends State<HomePage> {
         desc =
             "The current weather in $selectLoc is $weather. The current temperature is $temp Celcius and humidity is $hum percent. The sky are $description";
       });
+      Fluttertoast.showToast(
+          msg: "Found",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } else {
       setState(() {
         desc = "No record";
       });
+      Fluttertoast.showToast(
+          msg: "Failed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
     progressDialog.dismiss();
   }
