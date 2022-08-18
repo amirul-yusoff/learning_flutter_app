@@ -28,6 +28,8 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   cupertino_icons: ^1.0.2
+  date_field: ^3.0.1
+  datetime_picker_formfield: ^2.0.1
   flutter:
     sdk: flutter
   fluttertoast: ^8.0.9

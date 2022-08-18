@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:ndialog/ndialog.dart';
+import 'package:date_field/date_field.dart';
 
 class CurrencyChecker extends StatefulWidget {
   const CurrencyChecker({Key? key}) : super(key: key);
@@ -17,7 +18,8 @@ class CurrencyChecker extends StatefulWidget {
 class _CurrencyCheckerState extends State<CurrencyChecker> {
   var currency = "";
   var value = "";
-  var date = "";
+  var currDt = DateTime.now();
+  String dateselected = "";
   var one = 0.0, two = 0.0, three = 0.0, four = 0.0, five = 0.0;
   CurrencyField currentCurrency = CurrencyField("", "", "");
   String selectCurrency = "MYR";
@@ -42,11 +44,11 @@ class _CurrencyCheckerState extends State<CurrencyChecker> {
           children: [
             const SizedBox(height: 20),
             Flexible(
-              flex: 2,
+              flex: 1,
               child: Image.asset('assets/images/amirul_mobile.png', scale: 2),
             ),
             Flexible(
-                flex: 8,
+                flex: 9,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: SingleChildScrollView(
@@ -58,13 +60,34 @@ class _CurrencyCheckerState extends State<CurrencyChecker> {
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
+                        const SizedBox(height: 20),
+                        DateTimeFormField(
+                          decoration: const InputDecoration(
+                            hintStyle: TextStyle(color: Colors.black45),
+                            errorStyle: TextStyle(color: Colors.redAccent),
+                            border: OutlineInputBorder(),
+                            suffixIcon: Icon(Icons.event_note),
+                            labelText: 'Only Date',
+                          ),
+                          mode: DateTimeFieldPickerMode.date,
+                          autovalidateMode: AutovalidateMode.always,
+                          validator: (e) => (e?.day ?? 0) == 1
+                              ? 'Please not the first day'
+                              : null,
+                          onDateSelected: (DateTime date) {
+                            setState(() {
+                              String stringdate = date.toString();
+                              dateselected = stringdate.replaceAll(
+                                  RegExp(r' 00:00:00.000'), '');
+                              dateselected = dateselected;
+                            });
+                          },
+                        ),
                         DropdownButton(
                           itemHeight: 60,
                           value: selectCurrency,
                           onChanged: (newValue) {
-                            setState(() {
-                              selectCurrency = newValue.toString();
-                            });
+                            selectCurrency = newValue.toString();
                           },
                           items: currencyList.map((selectCurrency) {
                             return DropdownMenuItem(
@@ -97,7 +120,7 @@ class _CurrencyCheckerState extends State<CurrencyChecker> {
                                 size: 64,
                               ),
                               Text(
-                                "The currency on " + date,
+                                "The currency on " + dateselected,
                                 style: const TextStyle(
                                     fontSize: 24, fontWeight: FontWeight.bold),
                               ),
@@ -125,17 +148,23 @@ class _CurrencyCheckerState extends State<CurrencyChecker> {
         message: const Text("Progress"), title: const Text("Searching..."));
     progressDialog.show();
     currency = "this is $selectCurrency";
-    setState(() {});
     var string =
         "{USD: 0.223813, BTC: 0.00001, ETH: 0.000123, BNB: 0.000737, DOGE: 2.769286, XRP: 0.586502, BCH: 0.001685, LTC: 0.003733}";
     string = string.replaceAll(RegExp(r'{'), '');
     string = string.replaceAll(RegExp(r'}'), '');
     string = string.replaceAll(RegExp(r', '), '\n');
     value = string;
-    print(string);
+    // print(dateselected);
+    // setState(() {
+    //   String stringdate = dateselected;
+    //   dateselected = stringdate.replaceAll(RegExp(r' 00:00:00.000'), '');
+    // });
+
+    // print(string);
     var apiid = "131b84ba7ab940b7a3187172db51a2fd";
     var url = Uri.parse(
-        'https://exchange-rates.abstractapi.com/v1/historical/?api_key=$apiid&base=$selectCurrency&date=2022-08-17');
+        'https://exchange-rates.abstractapi.com/v1/historical/?api_key=$apiid&base=$selectCurrency&date=$dateselected');
+    print(url);
     var response = await http.get(url);
     var rescode = response.statusCode;
     if (rescode == 200) {
@@ -144,8 +173,8 @@ class _CurrencyCheckerState extends State<CurrencyChecker> {
       setState(() {
         currentCurrency = CurrencyField("", "", "");
         var numbers = parsedJson['exchange_rates'];
-        date = parsedJson['date'];
-        print(date);
+        dateselected = parsedJson['date'];
+        // print(date);
         string = "$numbers";
         string = string.replaceAll(RegExp(r'{'), '');
         string = string.replaceAll(RegExp(r'}'), '');
@@ -154,9 +183,6 @@ class _CurrencyCheckerState extends State<CurrencyChecker> {
         // for (var k in numbers.keys) {
         //   print("$k : ${numbers[k]}");
         // }
-
-        print("here");
-        print(parsedJson['exchange_rates'].length);
       });
 
       Fluttertoast.showToast(
@@ -181,6 +207,3 @@ class _CurrencyCheckerState extends State<CurrencyChecker> {
     progressDialog.dismiss();
   }
 }
-
-
-//new page
