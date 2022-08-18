@@ -71,7 +71,7 @@ class _CurrencyCheckerState extends State<CurrencyChecker> {
                           ),
                           mode: DateTimeFieldPickerMode.date,
                           autovalidateMode: AutovalidateMode.always,
-                          validator: (e) => (e?.day ?? 0) == 1
+                          validator: (e) => (e?.day ?? 0) == 0
                               ? 'Please not the first day'
                               : null,
                           onDateSelected: (DateTime date) {
