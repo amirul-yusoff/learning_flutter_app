@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mypasar/model/config.dart';
 
 import 'login_page.dart';
 
@@ -401,5 +402,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
     );
   }
 
-  void _registerUserAccount() {}
+  void _registerUserAccount() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    String _name = _nameEditingController.text;
+    String _email = _emailditingController.text;
+    String _pass = _passEditingController.text;
+    print(_name);
+    print(_email);
+    print(_pass);
+
+    var baseUrl =
+        "https://smsapp.jatitinggi.com/jati/webservice/public-v1.1.0/amirul-test/php/";
+    var fileName = "register_user.php";
+    var url = baseUrl + fileName;
+    print(url);
+    // cannot be use
+    // http.post(Uri.parse(MyConfig.server + "/mypasar/php/register_user.php"),
+    http.post(Uri.parse(url), body: {
+      "name": _name,
+      "email": _email,
+      "password": _pass
+    }).then((response) {
+      print(response.body);
+    });
+  }
 }
