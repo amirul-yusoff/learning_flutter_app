@@ -411,13 +411,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
     print(_email);
     print(_pass);
 
-    var baseUrl =
-        "https://smsapp.jatitinggi.com/jati/webservice/public-v1.1.0/amirul-test/php/";
+    var baseUrl = MyConfig.server;
     var fileName = "register_user.php";
     var url = baseUrl + fileName;
     print(url);
-    // cannot be use
-    // http.post(Uri.parse(MyConfig.server + "/mypasar/php/register_user.php"),
     http.post(Uri.parse(url), body: {
       "name": _name,
       "email": _email,
