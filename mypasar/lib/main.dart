@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mypasar/view/splash_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
           )),
       title: 'My Pasar',
       home: const Scaffold(
-        body: null,
+        body: SplashPage(),
       ),
     );
   }
