@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mypasar/model/config.dart';
-
+import 'package:ndialog/ndialog.dart';
 import 'login_page.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -403,24 +403,45 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   void _registerUserAccount() {
+    ProgressDialog progressDialog = ProgressDialog(context,
+        message: const Text("Registration in progress.."),
+        title: const Text("Registering..."));
+    progressDialog.show();
     FocusScope.of(context).requestFocus(FocusNode());
     String _name = _nameEditingController.text;
     String _email = _emailditingController.text;
     String _pass = _passEditingController.text;
-    print(_name);
-    print(_email);
-    print(_pass);
 
     var baseUrl = MyConfig.server;
     var fileName = "register_user.php";
     var url = baseUrl + fileName;
-    print(url);
     http.post(Uri.parse(url), body: {
       "name": _name,
       "email": _email,
       "password": _pass
     }).then((response) {
-      print(response.body);
+      var rescode = response.statusCode;
+      if (rescode == 200) {
+        Fluttertoast.showToast(
+            msg: "Registration Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Registration Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+      progressDialog.dismiss();
+      // print(rescode);
     });
   }
 }
