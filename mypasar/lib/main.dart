@@ -10,13 +10,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-          brightness: Brightness.dark,
-          fontFamily: 'Georgia',
-          textTheme: const TextTheme(
-            headline6: TextStyle(fontSize: 20.0),
-            bodyText1: TextStyle(
-                fontSize: 12.0, fontFamily: 'Hind', color: Colors.red),
-          )),
+        brightness: Brightness.dark,
+        // fontFamily: 'Georgia',
+        // textTheme: const TextTheme(
+        //   headline6: TextStyle(fontSize: 20.0),
+        //   bodyText1: TextStyle(
+        //       fontSize: 12.0, fontFamily: 'Hind', color: Colors.red),
+        // )
+      ),
+      darkTheme: ThemeData.dark(),
       title: 'My Pasar',
       home: const Scaffold(
         body: SplashPage(),

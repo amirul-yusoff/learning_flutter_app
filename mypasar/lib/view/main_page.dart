@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'tab_page_1.dart';
+import 'tab_page_2.dart';
+import 'tab_page_3.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -16,7 +18,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    tabchildren = [const TabPage1(), const TabPage1(), const TabPage1()];
+    tabchildren = [const TabPage1(), const TabPage2(), const TabPage3()];
   }
 
   @override
