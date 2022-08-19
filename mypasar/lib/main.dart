@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mypasar/view/splash_page.dart';
 
-void main() => runApp(const MyApp());
+// void main() => runApp(const MyApp());
+void main() {
+  HttpOverrides.global = PostHttpOverrides();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -24,5 +30,14 @@ class MyApp extends StatelessWidget {
         body: SplashPage(),
       ),
     );
+  }
+}
+
+class PostHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
