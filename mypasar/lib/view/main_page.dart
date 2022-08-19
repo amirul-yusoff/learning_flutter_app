@@ -14,6 +14,7 @@ class _MainPageState extends State<MainPage> {
   late List<Widget> tabchildren;
   int _currentIndex = 0;
   String mainTitle = "Buyer";
+  late double screenHeight, screenWidth, resWidth;
 
   @override
   void initState() {
@@ -23,6 +24,14 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth <= 600) {
+      resWidth = screenWidth;
+    } else {
+      resWidth = screenWidth * 0.75;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Pasar'),

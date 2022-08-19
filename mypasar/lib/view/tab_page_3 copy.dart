@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'login_page.dart';
 import 'registration_page.dart';
 
 class TabPage3 extends StatefulWidget {
@@ -127,9 +126,9 @@ class _TabPage3State extends State<TabPage3> {
                         const Divider(
                           height: 2,
                         ),
-                        MaterialButton(
-                          onPressed: _loginAccountDialog,
-                          child: const Text("LOGIN"),
+                        const MaterialButton(
+                          onPressed: null,
+                          child: Text("LOGIN"),
                         ),
                         const Divider(
                           height: 2,
@@ -178,51 +177,6 @@ class _TabPage3State extends State<TabPage3> {
                     MaterialPageRoute(
                         builder: (BuildContext context) =>
                             const RegistrationPage()));
-              },
-            ),
-            TextButton(
-              child: const Text(
-                "No",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _loginAccountDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          title: const Text(
-            "Go to Login Page",
-            style: TextStyle(),
-          ),
-          content: const Text(
-            "Are you sure?",
-            style: TextStyle(),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                "Yes",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => const LoginPage()));
               },
             ),
             TextButton(
