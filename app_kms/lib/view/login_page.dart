@@ -22,7 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   final focus = FocusNode();
   final focus1 = FocusNode();
   final focus2 = FocusNode();
-  final TextEditingController _emailditingController = TextEditingController();
+  final TextEditingController _usernameditingController =
+      TextEditingController();
   final TextEditingController _passEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isChecked = false;
@@ -95,20 +96,14 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           TextFormField(
                               textInputAction: TextInputAction.next,
-                              validator: (val) => val!.isEmpty ||
-                                      !val.contains("@") ||
-                                      !val.contains(".")
-                                  ? "enter a valid email"
-                                  : null,
                               focusNode: focus,
                               onFieldSubmitted: (v) {
                                 FocusScope.of(context).requestFocus(focus1);
                               },
-                              controller: _emailditingController,
-                              keyboardType: TextInputType.emailAddress,
+                              controller: _usernameditingController,
                               decoration: const InputDecoration(
                                   labelStyle: TextStyle(),
-                                  labelText: 'Email',
+                                  labelText: 'Username',
                                   icon: Icon(
                                     Icons.phone,
                                   ),
@@ -206,17 +201,17 @@ class _LoginPageState extends State<LoginPage> {
         message: const Text("Please wait.."), title: const Text("Login user"));
     progressDialog.show();
 
-    String _email = _emailditingController.text;
+    String _username = _usernameditingController.text;
     String _pass = _passEditingController.text;
     http.post(Uri.parse(MyConfig.server + "/login_user.php"),
-        body: {"email": _email, "password": _pass}).then((response) {
+        body: {"username": _username, "password": _pass}).then((response) {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
       var temp = parsedJson['responseCode'];
 
       if (temp == 200) {
         final jsonResponse = json.decode(response.body);
-        User user = User.fromJson(json.decode(jsonResponse['data']));
+        User user = User.fromJson(jsonResponse['data']);
         var error = parsedJson['responseMessage'];
         Fluttertoast.showToast(
             msg: error,
@@ -263,12 +258,12 @@ class _LoginPageState extends State<LoginPage> {
     }
     FocusScope.of(context).requestFocus(FocusNode());
     FocusScope.of(context).unfocus();
-    String email = _emailditingController.text;
+    String username = _usernameditingController.text;
     String password = _passEditingController.text;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (value) {
       //save preference
-      await prefs.setString('email', email);
+      await prefs.setString('username', username);
       await prefs.setString('pass', password);
       Fluttertoast.showToast(
           msg: "Preference Stored",
@@ -278,10 +273,10 @@ class _LoginPageState extends State<LoginPage> {
           fontSize: 14.0);
     } else {
       //delete preference
-      await prefs.setString('email', '');
+      await prefs.setString('username', '');
       await prefs.setString('pass', '');
       setState(() {
-        _emailditingController.text = '';
+        _usernameditingController.text = '';
         _passEditingController.text = '';
         _isChecked = false;
       });
@@ -305,11 +300,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> loadPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String email = (prefs.getString('email')) ?? '';
+    String username = (prefs.getString('username')) ?? '';
     String password = (prefs.getString('pass')) ?? '';
-    if (email.length > 1 && password.length > 1) {
+    if (username.length > 1 && password.length > 1) {
       setState(() {
-        _emailditingController.text = email;
+        _usernameditingController.text = username;
         _passEditingController.text = password;
         _isChecked = true;
       });

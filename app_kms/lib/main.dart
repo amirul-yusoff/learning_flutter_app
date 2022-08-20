@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
         // fontFamily: 'Georgia',
         // textTheme: const TextTheme(
         //   headline6: TextStyle(fontSize: 20.0),
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         //       fontSize: 12.0, fontFamily: 'Hind', color: Colors.red),
         // )
       ),
-      darkTheme: ThemeData.dark(),
+      // darkTheme: ThemeData.dark(),
       title: 'App KMS',
       home: const Scaffold(
         body: SplashPage(),
