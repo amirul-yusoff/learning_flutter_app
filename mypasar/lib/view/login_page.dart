@@ -230,17 +230,22 @@ class _LoginPageState extends State<LoginPage> {
           fontSize: 14.0);
       return;
     }
+    ProgressDialog progressDialog = ProgressDialog(context,
+        message: const Text("Please wait.."), title: const Text("Login user"));
+    progressDialog.show();
+
     String _email = _emailditingController.text;
     String _pass = _passEditingController.text;
     http.post(Uri.parse(MyConfig.server + "/login_user.php"),
         body: {"email": _email, "password": _pass}).then((response) {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
-      var temp = parsedJson['Response']['responseCode'];
+      var temp = parsedJson['responseCode'];
+
       if (temp == 200) {
-        var valueData = parsedJson['data'];
-        print(valueData);
-        var error = parsedJson['Response']['responseMessage'];
+        final jsonResponse = json.decode(response.body);
+        User user = User.fromJson(json.decode(jsonResponse['data']));
+        var error = parsedJson['responseMessage'];
         Fluttertoast.showToast(
             msg: error,
             toastLength: Toast.LENGTH_SHORT,
@@ -249,7 +254,7 @@ class _LoginPageState extends State<LoginPage> {
             fontSize: 14.0);
         return;
       } else if (temp == -100) {
-        var error = parsedJson['Response']['responseMessage'];
+        var error = parsedJson['responseMessage'];
         Fluttertoast.showToast(
             msg: error,
             toastLength: Toast.LENGTH_SHORT,
@@ -267,6 +272,7 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
     });
+    progressDialog.dismiss();
   }
 
   void saveremovepref(bool value) async {

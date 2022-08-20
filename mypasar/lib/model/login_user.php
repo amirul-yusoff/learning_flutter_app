@@ -41,7 +41,8 @@ if (isset($_POST["email"]) && isset($_POST["password"])) {
 	} else {
 		$rowData = $stmt->fetch(PDO::FETCH_ASSOC);
 		$rowData = json_encode($rowData);
-		echo json_encode(array("Response" => array("responseCode" => 200, "responseMessage" => "Credential Found"), "data" => $rowData));
+		echo json_encode(array("responseCode" => 200,"responseMessage"=>"Credential Found", "data" => $rowData));
+		// echo json_encode(array("Response" => array("responseCode" => 200, "responseMessage" => "Credential Found"), "data" => $rowData));
 	}
 
 	
