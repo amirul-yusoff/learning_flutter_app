@@ -19,6 +19,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late double screenHeight, screenWidth, resWidth;
+  bool _passwordVisible = true;
   final focus = FocusNode();
   final focus1 = FocusNode();
   final focus2 = FocusNode();
@@ -124,16 +125,28 @@ class _LoginPageState extends State<LoginPage> {
                               FocusScope.of(context).requestFocus(focus2);
                             },
                             controller: _passEditingController,
-                            decoration: const InputDecoration(
-                                labelStyle: TextStyle(),
+                            decoration: InputDecoration(
+                                labelStyle: const TextStyle(),
                                 labelText: 'Password',
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.lock,
                                 ),
-                                focusedBorder: OutlineInputBorder(
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _passwordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _passwordVisible = !_passwordVisible;
+                                    });
+                                  },
+                                ),
+                                focusedBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(width: 2.0),
                                 )),
-                            obscureText: true,
+                            obscureText: _passwordVisible,
                           ),
                           const SizedBox(
                             height: 15,
@@ -252,7 +265,12 @@ class _LoginPageState extends State<LoginPage> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
-        return;
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => MainPage(
+                      user: user,
+                    )));
       } else if (temp == -100) {
         var error = parsedJson['responseMessage'];
         Fluttertoast.showToast(

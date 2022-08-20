@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mypasar/model/user.dart';
 import 'tab_page_1.dart';
 import 'tab_page_2.dart';
 import 'tab_page_3.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  final User user;
+  const MainPage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainPageState();
