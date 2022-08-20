@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -420,8 +422,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
       "email": _email,
       "password": _pass
     }).then((response) {
-      var rescode = response.statusCode;
-      if (rescode == 200) {
+      var jsonData = response.body;
+      var parsedJson = json.decode(jsonData);
+      var responseCode = parsedJson['responseCode'];
+      if (responseCode == 200) {
         Fluttertoast.showToast(
             msg: "Registration Success",
             toastLength: Toast.LENGTH_SHORT,
@@ -441,7 +445,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
             fontSize: 16.0);
       }
       progressDialog.dismiss();
-      // print(rescode);
     });
   }
 }

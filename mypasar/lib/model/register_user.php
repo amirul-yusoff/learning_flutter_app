@@ -1,4 +1,6 @@
 <?php
+use Carbon\Carbon;
+
 if (isset($_POST["name"]) && isset($_POST["email"]) && isset($_POST["password"]) ) {
     require_once('config.ini.php');
 	
@@ -7,6 +9,7 @@ if (isset($_POST["name"]) && isset($_POST["email"]) && isset($_POST["password"])
     $password = sha1($_POST["password"]);
     $otp = rand();
     $na = "na";
+    $user_datareg = new DateTime();
 	
     $responseArray = array();
     $dsn = "mysql:host=".DB_SERVER.";dbname=".DB_DATABASE.";charset=utf8mb4";
@@ -26,14 +29,15 @@ if (isset($_POST["name"]) && isset($_POST["email"]) && isset($_POST["password"])
 	$insertQuery = $pdo->prepare("INSERT INTO 
     tbl_users 
     (user_email,user_name,user_password,
-    user_phone,user_address,otp) 
+    user_phone,user_address,otp,user_datareg) 
     VALUES(?,?,?,?,?,
-    ?)");
-    $insertQuery->execute([$email,$name,$password,$na,$na,$otp]);
-    // Code to check sum of work done and update Complete Status
-    echo json_encode(array("Response" => array("responseCode" => 200, "responseMessage" => "Insert successful")));
+    ?,?)");
+    $insertQuery->execute([$email,$name,$password,$na,$na,$otp,$user_datareg->format("Y/m/d H:i:s")]);
+    echo json_encode(array("responseCode" => 200,"responseMessage"=>"Insert successful"));
+    // echo json_encode(array("Response" => array("responseCode" => 200, "responseMessage" => "Insert successful")));
 
 } else {
-    echo json_encode(array("Response" => array("responseCode" => -100, "responseMessage" => "Incomplete Information Posted")));
+    echo json_encode(array("responseCode" => -100,"responseMessage"=>"Incomplete Information Posted"));
+    // echo json_encode(array("Response" => array("responseCode" => -100, "responseMessage" => "Incomplete Information Posted")));
 }
 ?>

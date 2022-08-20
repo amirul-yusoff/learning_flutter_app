@@ -32,10 +32,12 @@ if (isset($_POST["email"]) && isset($_POST["password"])) {
 		$validLoginUsername = $stmt->rowCount();
 
 		if ($validLoginUsername == 1) {
-			echo json_encode(array("Response" => array("responseCode" => -100, "responseMessage" => "Wrong password")));
+			echo json_encode(array("responseCode" => -100,"responseMessage"=>"Wrong password"));
+			// echo json_encode(array("Response" => array("responseCode" => -100, "responseMessage" => "Wrong password")));
 		}
 		if ($validLoginUsername == 0) {
-			echo json_encode(array("Response" => array("responseCode" => -100, "responseMessage" => "Credential Not Found")));
+			echo json_encode(array("responseCode" => -100,"responseMessage"=>"Credential Not Found"));
+			// echo json_encode(array("Response" => array("responseCode" => -100, "responseMessage" => "Credential Not Found")));
 		}
 
 	} else {
@@ -47,6 +49,7 @@ if (isset($_POST["email"]) && isset($_POST["password"])) {
 
 	
 }  else {
-    echo json_encode(array("Response" => array("responseCode" => -100, "responseMessage" => "Username and password cannot be empty")));
+	echo json_encode(array("responseCode" => -100,"responseMessage"=>"Username and password cannot be empty"));
+    // echo json_encode(array("Response" => array("responseCode" => -100, "responseMessage" => "Username and password cannot be empty")));
 }
 ?>
