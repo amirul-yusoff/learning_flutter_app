@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mypasar/model/user.dart';
 
 class TabPage2 extends StatefulWidget {
-  const TabPage2({Key? key}) : super(key: key);
+  final User user;
+  const TabPage2({Key? key, required this.user}) : super(key: key);
 
   @override
   State<TabPage2> createState() => _TabPage2State();

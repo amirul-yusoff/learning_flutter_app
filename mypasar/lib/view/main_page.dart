@@ -21,7 +21,11 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    tabchildren = [const TabPage1(), const TabPage2(), const TabPage3()];
+    tabchildren = [
+      TabPage1(user: widget.user),
+      TabPage2(user: widget.user),
+      TabPage3(user: widget.user)
+    ];
   }
 
   @override

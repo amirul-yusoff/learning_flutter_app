@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mypasar/model/user.dart';
 
 import 'login_page.dart';
 import 'registration_page.dart';
 
 class TabPage3 extends StatefulWidget {
-  const TabPage3({Key? key}) : super(key: key);
+  final User user;
+  const TabPage3({Key? key, required this.user}) : super(key: key);
 
   @override
   _TabPage3State createState() => _TabPage3State();
