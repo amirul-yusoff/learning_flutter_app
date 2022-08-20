@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mypasar/model/user.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class TabPage2 extends StatefulWidget {
   final User user;
@@ -12,10 +13,18 @@ class TabPage2 extends StatefulWidget {
 class _TabPage2State extends State<TabPage2> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        child: const Text("Tab 2"),
-      ),
-    );
+    return Scaffold(
+        body: Container(),
+        floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          children: [
+            SpeedDialChild(
+                child: const Icon(Icons.add),
+                label: "New Product",
+                labelStyle: const TextStyle(color: Colors.black),
+                labelBackgroundColor: Colors.green,
+                onTap: null),
+          ],
+        ));
   }
 }
