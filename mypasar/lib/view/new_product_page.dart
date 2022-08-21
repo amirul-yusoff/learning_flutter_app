@@ -9,8 +9,8 @@ import 'package:ndialog/ndialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-// import 'package:geolocator/geolocator.dart';
-// import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class NewProductPage extends StatefulWidget {
   final User user;
@@ -44,7 +44,7 @@ class _NewProductPageState extends State<NewProductPage> {
       TextEditingController();
   final TextEditingController _prlocalEditingController =
       TextEditingController();
-  // late Position _currentPosition;
+  late Position _currentPosition;
   String curaddress = "Changlun";
   String curstate = "Kedah";
   String prlat = "6.460329";
@@ -408,23 +408,23 @@ class _NewProductPageState extends State<NewProductPage> {
     progressDialog.show();
 
     // String base64Image = base64Encode(_image!.readAsBytesSync());
-    http.post(Uri.parse(MyConfig.server + "/mypasar/php/new_product.php"),
-        body: {
-          "pridowner": widget.user.userId,
-          "premail": widget.user.userEmail,
-          "prname": _prname,
-          "prdesc": _prdesc,
-          "prprice": _prprice,
-          "prqty": _prqty,
-          "prstate": _prstate,
-          "prloc": _prloc,
-          "prlat": prlat,
-          "prlong": prlong,
-          // "image": base64Image,
-        }).then((response) {
-      print(response.body);
+    http.post(Uri.parse(MyConfig.server + "/new_product.php"), body: {
+      "productOwner": widget.user.userId.toString(),
+      "userEmail": widget.user.userEmail,
+      "productName": _prname,
+      "productDesc": _prdesc,
+      "productPrice": _prprice,
+      "productQty": _prqty,
+      "productState": _prstate,
+      "productLoc": _prloc,
+      "productLat": prlat,
+      "productLong": prlong,
+    }).then((response) {
+      var jsonData = response.body;
+      var parsedJson = json.decode(jsonData);
+      var temp = parsedJson['responseCode'];
       var data = jsonDecode(response.body);
-      if (response.statusCode == 200 && data['status'] == 'success') {
+      if (temp == 200) {
         Fluttertoast.showToast(
             msg: "Success",
             toastLength: Toast.LENGTH_SHORT,
@@ -503,21 +503,46 @@ class _NewProductPageState extends State<NewProductPage> {
     }
   }
 
-  // _getAddress(Position pos) async {
-  //   List<Placemark> placemarks =
-  //       await placemarkFromCoordinates(pos.latitude, pos.longitude);
-  //   setState(() {
-  //     _prlocalEditingController.text = placemarks[0].locality.toString();
-  //     _prstateEditingController.text =
-  //         placemarks[0].administrativeArea.toString();
-  //     prlat = _currentPosition.latitude.toString();
-  //     prlong = _currentPosition.longitude.toString();
-  //   });
-  // }
+  _getAddress(Position pos) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(pos.latitude, pos.longitude);
+    setState(() {
+      _prlocalEditingController.text = placemarks[0].locality.toString();
+      _prstateEditingController.text =
+          placemarks[0].administrativeArea.toString();
+      prlat = _currentPosition.latitude.toString();
+      prlong = _currentPosition.longitude.toString();
+    });
+  }
 
-  void _getAddress() {}
   void _loadNewCredit() {}
-  void _determinePosition() {}
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    _currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    _getAddress(_currentPosition);
+    return _currentPosition;
+  }
 
   // Future<Position> _determinePosition() async {
   //   bool serviceEnabled;
