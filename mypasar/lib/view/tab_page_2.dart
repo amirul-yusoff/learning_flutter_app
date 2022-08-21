@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mypasar/model/user.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'main_page.dart';
+import 'new_product_page.dart';
 
 class TabPage2 extends StatefulWidget {
   final User user;
@@ -23,8 +26,27 @@ class _TabPage2State extends State<TabPage2> {
                 label: "New Product",
                 labelStyle: const TextStyle(color: Colors.black),
                 labelBackgroundColor: Colors.green,
-                onTap: null),
+                onTap: _newProduct),
           ],
         ));
+  }
+
+  void _newProduct() {
+    if (widget.user.userId == null) {
+      Fluttertoast.showToast(
+          msg: "You need to Login before Adding new Product",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                NewProductPage(user: widget.user)));
   }
 }

@@ -37,8 +37,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth <= 600) {
+      //mobile app
       resWidth = screenWidth;
     } else {
+      //tablet
       resWidth = screenWidth * 0.75;
     }
     return Scaffold(

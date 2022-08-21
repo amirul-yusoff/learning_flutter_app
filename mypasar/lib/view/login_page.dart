@@ -40,8 +40,10 @@ class _LoginPageState extends State<LoginPage> {
     screenWidth = MediaQuery.of(context).size.width;
 
     if (screenWidth <= 600) {
+      //mobile app
       resWidth = screenWidth;
     } else {
+      //tablet
       resWidth = screenWidth * 0.75;
     }
 

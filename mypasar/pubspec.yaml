@@ -33,10 +33,16 @@ dependencies:
   ndialog: ^4.1.0
   shared_preferences: ^2.0.15
   flutter_speed_dial: ^6.0.0
-
+  image_picker: ^0.8.4+3
+  image_picker_for_web: ^2.1.8
+  image_cropper: ^1.5.1
+  geocoding: ^2.0.4
+  geolocator: ^7.7.1
 
   flutter:
     sdk: flutter
+  
+  
   
 
 
