@@ -1,16 +1,16 @@
 <?php
 use Carbon\Carbon;
 
-if (isset($_POST["productOwner"]) && 
-isset($_POST["userEmail"]) && 
-isset($_POST["productName"]) && 
-isset($_POST["productDesc"]) && 
-isset($_POST["productPrice"]) && 
-isset($_POST["productQty"]) && 
-isset($_POST["productState"]) && 
-isset($_POST["productLoc"]) && 
-isset($_POST["productLat"]) && 
-isset($_POST["productLong"]) ) {
+    if (isset($_POST["productOwner"]) && 
+    isset($_POST["userEmail"]) && 
+    isset($_POST["productName"]) && 
+    isset($_POST["productDesc"]) && 
+    isset($_POST["productPrice"]) && 
+    isset($_POST["productQty"]) && 
+    isset($_POST["productState"]) && 
+    isset($_POST["productLoc"]) && 
+    isset($_POST["productLat"]) && 
+    isset($_POST["productLong"]) ) {
     require_once('config.ini.php');
 	
     $productOwner = $_POST["productOwner"];

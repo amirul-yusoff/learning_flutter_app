@@ -407,8 +407,8 @@ class _NewProductPageState extends State<NewProductPage> {
         title: const Text("Processing..."));
     progressDialog.show();
 
-    // String base64Image = base64Encode(_image!.readAsBytesSync());
-    http.post(Uri.parse(MyConfig.server + "/new_product.php"), body: {
+    String base64Image = base64Encode(_image!.readAsBytesSync());
+    http.post(Uri.parse(MyConfig.server + "/new_product_msqli.php"), body: {
       "productOwner": widget.user.userId.toString(),
       "userEmail": widget.user.userEmail,
       "productName": _prname,
@@ -419,12 +419,13 @@ class _NewProductPageState extends State<NewProductPage> {
       "productLoc": _prloc,
       "productLat": prlat,
       "productLong": prlong,
+      "image": base64Image,
     }).then((response) {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
-      var temp = parsedJson['responseCode'];
-      var data = jsonDecode(response.body);
-      if (temp == 200) {
+      var responseCode = parsedJson['code'];
+      print(responseCode);
+      if (responseCode == 200) {
         Fluttertoast.showToast(
             msg: "Success",
             toastLength: Toast.LENGTH_SHORT,
@@ -543,31 +544,4 @@ class _NewProductPageState extends State<NewProductPage> {
     _getAddress(_currentPosition);
     return _currentPosition;
   }
-
-  // Future<Position> _determinePosition() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
-
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     return Future.error('Location services are disabled.');
-  //   }
-
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       return Future.error('Location permissions are denied');
-  //     }
-  //   }
-
-  //   if (permission == LocationPermission.deniedForever) {
-  //     return Future.error(
-  //         'Location permissions are permanently denied, we cannot request permissions.');
-  //   }
-  //   _currentPosition = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  //   _getAddress(_currentPosition);
-  //   return _currentPosition;
-  // }
 }
