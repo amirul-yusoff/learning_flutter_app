@@ -1,5 +1,5 @@
 class Product {
-  String? productId;
+  int? productId;
   String? productOwner;
   String? productName;
   String? userEmail;

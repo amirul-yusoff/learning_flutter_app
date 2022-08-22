@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mypasar/model/product.dart';
 import 'package:mypasar/model/user.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'main_page.dart';
 import 'new_product_page.dart';
+import 'package:http/http.dart' as http;
+import 'package:mypasar/model/config.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class TabPage2 extends StatefulWidget {
   final User user;
@@ -14,10 +20,112 @@ class TabPage2 extends StatefulWidget {
 }
 
 class _TabPage2State extends State<TabPage2> {
+  List productlist = [];
+  String titlecenter = "Loading data...";
+  late double screenHeight, screenWidth, resWidth;
+  final df = '';
+  late ScrollController _scrollController;
+  int scrollcount = 10;
+  int rowcount = 2;
+  int numprd = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+    _loadProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth <= 600) {
+      resWidth = screenWidth;
+      rowcount = 2;
+    } else {
+      resWidth = screenWidth * 0.75;
+      rowcount = 3;
+    }
     return Scaffold(
-        body: Container(),
+        body: productlist.isEmpty
+            ? Center(
+                child: Text(titlecenter,
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold)))
+            : Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    child: Text("Your Current Products",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  Text(numprd.toString() + " found"),
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: rowcount,
+                      controller: _scrollController,
+                      children: List.generate(scrollcount, (index) {
+                        return Card(
+                            child: InkWell(
+                          onTap: () => {_prodDetails(index)},
+                          child: Column(
+                            children: [
+                              // Flexible(
+                              // flex: 6,
+                              // child:
+                              // CachedNetworkImage(
+                              //   width: screenWidth,
+                              //   fit: BoxFit.cover,
+                              //   imageUrl: MyConfig.server +
+                              //       "/mypasar/images/products/" +
+                              //       productlist[index]['product_id'] +
+                              //       ".png",
+                              //   placeholder: (context, url) =>
+                              //       const LinearProgressIndicator(),
+                              //   errorWidget: (context, url, error) =>
+                              //       const Icon(Icons.error),
+                              // ),
+                              // ),
+                              Flexible(
+                                  flex: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                            truncateString(productlist[index]
+                                                    ['product_name']
+                                                .toString()),
+                                            style: TextStyle(
+                                                fontSize: resWidth * 0.045,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(
+                                            "RM " +
+                                                double.parse(productlist[index]
+                                                        ['product_price'])
+                                                    .toStringAsFixed(2) +
+                                                "  -  " +
+                                                productlist[index]
+                                                    ['product_qty'] +
+                                                " in stock",
+                                            style: TextStyle(
+                                              fontSize: resWidth * 0.03,
+                                            )),
+                                        const Text("date"),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ));
+                      }),
+                    ),
+                  ),
+                ],
+              ),
         floatingActionButton: SpeedDial(
           animatedIcon: AnimatedIcons.menu_close,
           children: [
@@ -25,10 +133,27 @@ class _TabPage2State extends State<TabPage2> {
                 child: const Icon(Icons.add),
                 label: "New Product",
                 labelStyle: const TextStyle(color: Colors.black),
-                labelBackgroundColor: Colors.green,
+                labelBackgroundColor: Colors.white,
                 onTap: _newProduct),
           ],
         ));
+  }
+
+  // int loadPages(int prlist) {
+  //   int itemperpage = 10;
+  //   if (prlist <= 10) {
+  //     return prlist;
+  //   }
+
+  // }
+
+  String truncateString(String str) {
+    if (str.length > 15) {
+      str = str.substring(0, 15);
+      return str + "...";
+    } else {
+      return str;
+    }
   }
 
   void _newProduct() {
@@ -48,5 +173,88 @@ class _TabPage2State extends State<TabPage2> {
         MaterialPageRoute(
             builder: (BuildContext context) =>
                 NewProductPage(user: widget.user)));
+  }
+
+  _loadProducts() {
+    if (widget.user.userEmail == "na") {
+      setState(() {
+        titlecenter = "Unregistered User";
+      });
+      return;
+    }
+    print(widget.user.userId);
+    var userID = "0";
+    if (widget.user.userId == null) {
+      userID = "0";
+    } else {
+      userID = widget.user.userId.toString();
+    }
+    // print(MyConfig.server + "/load_sellers_product.php");
+    http.post(Uri.parse(MyConfig.server + "/load_sellers_product.php"),
+        body: {'productOwner': userID}).then((response) {
+      var jsonData = response.body;
+      var parsedJson = json.decode(jsonData);
+      var temp = parsedJson['codeResponse'];
+      if (temp == 200) {
+        var extractdata = parsedJson['data'];
+        setState(() {
+          productlist = extractdata;
+          numprd = productlist.length;
+          if (scrollcount >= productlist.length) {
+            scrollcount = productlist.length;
+          }
+        });
+      } else {
+        setState(() {
+          titlecenter = "No Data";
+        });
+      }
+    });
+  }
+
+  _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      setState(() {
+        if (productlist.length > scrollcount) {
+          scrollcount = scrollcount + 10;
+          if (scrollcount >= productlist.length) {
+            scrollcount = productlist.length;
+          }
+        }
+      });
+    }
+    // if (_scrollController.offset <=
+    //         _scrollController.position.minScrollExtent &&
+    //     !_scrollController.position.outOfRange) {
+    //   setState(() {
+    //     message = "reach the top";
+    //   });
+    // }
+  }
+
+  _prodDetails(int index) async {
+    Product product = Product(
+      productId: productlist[index]['product_id'],
+      productName: productlist[index]['product_name'],
+      productDesc: productlist[index]['product_desc'],
+      productPrice: productlist[index]['product_price'],
+      productQty: productlist[index]['product_qty'],
+      userEmail: productlist[index]['user_email'],
+      productState: productlist[index]['product_state'],
+      productLoc: productlist[index]['product_loc'],
+      productLat: productlist[index]['product_lat'],
+      productLong: productlist[index]['product_long'],
+      productDate: productlist[index]['product_date'],
+    );
+
+    // await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (BuildContext context) => PrDetailsOwnerPage(
+    //               product: product,
+    //             )));
+    _loadProducts();
   }
 }
