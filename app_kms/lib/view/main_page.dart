@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 
+import 'asset_list_page.dart';
+import 'model/user.dart';
+
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  final User user;
+  const MainPage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     late double screenHeight, screenWidth, resWidth, resHeight;
@@ -52,13 +61,12 @@ class _MainPageState extends State<MainPage> {
                                 highlightColor: Colors.yellow.withOpacity(0.3),
                                 splashColor: Colors.red.withOpacity(0.5),
                                 onTap: () {
-                                  print("Go to Waktu Azan");
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //       builder: (context) =>
-                                  //           const WaktuAzanPage()),
-                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AssetListPage(user: widget.user)),
+                                  );
                                 },
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,

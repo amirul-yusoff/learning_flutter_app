@@ -222,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => const MainPage()));
+                builder: (BuildContext context) => MainPage(user: user)));
       } else if (temp == -100) {
         var error = parsedJson['responseMessage'];
         Fluttertoast.showToast(
