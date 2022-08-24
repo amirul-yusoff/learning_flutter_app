@@ -408,7 +408,7 @@ class _NewProductPageState extends State<NewProductPage> {
     progressDialog.show();
 
     String base64Image = base64Encode(_image!.readAsBytesSync());
-    http.post(Uri.parse(MyConfig.server + "/new_product_msqli.php"), body: {
+    http.post(Uri.parse(MyConfig.server + "php/new_product_msqli.php"), body: {
       "productOwner": widget.user.userId.toString(),
       "userEmail": widget.user.userEmail,
       "productName": _prname,

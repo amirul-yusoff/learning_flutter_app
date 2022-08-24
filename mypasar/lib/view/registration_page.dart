@@ -417,7 +417,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     String _pass = _passEditingController.text;
 
     var baseUrl = MyConfig.server;
-    var fileName = "register_user.php";
+    var fileName = "php/register_user.php";
     var url = baseUrl + fileName;
     http.post(Uri.parse(url), body: {
       "name": _name,

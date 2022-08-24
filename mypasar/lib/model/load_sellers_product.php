@@ -4,9 +4,11 @@
     include_once("dbconnect.php");
     $productOwner = $_POST['productOwner'];
 
-    $sqlloadproduct = "SELECT product_id,product_owner,product_name,user_email,product_desc,
-    product_price,product_qty,product_state,product_loc,product_lat,product_long,
-    product_date FROM tbl_product WHERE product_owner = '$productOwner' ORDER BY product_id";
+    $sqlloadproduct = "SELECT a.product_id,a.product_owner,a.product_name,a.user_email,a.product_desc,a.product_price,a.product_qty,a.product_state,a.product_loc,a.product_lat,a.product_long,a.product_date,
+    b.product_id as image_has_product_id ,b.image_hash_name
+    FROM tbl_product a left join product_has_image b ON a.product_id = b.product_id
+    WHERE product_owner = '$productOwner' ORDER BY product_id";
+
     $result = $conn->query($sqlloadproduct);
     if ($result->num_rows > 0) {
         $response["products"] = array();
@@ -24,6 +26,7 @@
             $prlist['product_lat'] = $row['product_lat'];
             $prlist['product_long'] = $row['product_long'];
             $prlist['product_date'] = $row['product_date'];
+            $prlist['image_hash_name'] = $row['image_hash_name'];
             array_push($response["products"],$prlist);
         }
         $response = array('codeResponse' => 200,'status' => 'success', 'data' => $response["products"],'count'=>$result->num_rows);

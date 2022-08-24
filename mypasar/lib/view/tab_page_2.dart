@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mypasar/model/product.dart';
@@ -73,22 +73,27 @@ class _TabPage2State extends State<TabPage2> {
                           onTap: () => {_prodDetails(index)},
                           child: Column(
                             children: [
-                              // Flexible(
-                              // flex: 6,
-                              // child:
-                              // CachedNetworkImage(
-                              //   width: screenWidth,
-                              //   fit: BoxFit.cover,
-                              //   imageUrl: MyConfig.server +
-                              //       "/mypasar/images/products/" +
-                              //       productlist[index]['product_id'] +
-                              //       ".png",
-                              //   placeholder: (context, url) =>
-                              //       const LinearProgressIndicator(),
-                              //   errorWidget: (context, url, error) =>
-                              //       const Icon(Icons.error),
-                              // ),
-                              // ),
+                              Flexible(
+                                flex: 6,
+                                child: CachedNetworkImage(
+                                  width: screenWidth,
+                                  fit: BoxFit.cover,
+                                  imageUrl:
+                                      //  Striproductlist[index]['image_hash_name']
+                                      // MyConfig.server +
+                                      //     "images/products/74913db3bfc6d8ea863e865bd0639642835feb82.png",
+                                      MyConfig.server +
+                                          "images/products/" +
+                                          productlist[index]
+                                              ['image_hash_name'] +
+                                          ".png",
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  // const LinearProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
+                              ),
                               Flexible(
                                   flex: 4,
                                   child: Padding(
@@ -156,6 +161,7 @@ class _TabPage2State extends State<TabPage2> {
     }
   }
 
+  void _loadImagesHash() {}
   void _newProduct() {
     if (widget.user.userId == null) {
       Fluttertoast.showToast(
@@ -190,15 +196,27 @@ class _TabPage2State extends State<TabPage2> {
       userID = widget.user.userId.toString();
     }
     // print(MyConfig.server + "/load_sellers_product.php");
-    http.post(Uri.parse(MyConfig.server + "/load_sellers_product.php"),
+    http.post(Uri.parse(MyConfig.server + "php/load_sellers_product.php"),
         body: {'productOwner': userID}).then((response) {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
       var temp = parsedJson['codeResponse'];
       if (temp == 200) {
         var extractdata = parsedJson['data'];
+        print(extractdata);
         setState(() {
           productlist = extractdata;
+          for (var productlistDetails in productlist) {
+            print("here");
+            productlistDetails['check_image_path'] = 0;
+
+            productlistDetails['image_hash_name'] =
+                (productlistDetails['image_hash_name'] == null)
+                    ? "no_image"
+                    : productlistDetails['image_hash_name'];
+
+            print(File("/php/load_sellers_product.php").existsSync());
+          }
           numprd = productlist.length;
           if (scrollcount >= productlist.length) {
             scrollcount = productlist.length;
@@ -235,6 +253,10 @@ class _TabPage2State extends State<TabPage2> {
   }
 
   _prodDetails(int index) async {
+    productlist[index]['image_hash_name'] =
+        (productlist[index]['image_hash_name'] == null)
+            ? "no_image"
+            : productlist[index]['image_hash_name'];
     Product product = Product(
       productId: productlist[index]['product_id'],
       productName: productlist[index]['product_name'],
