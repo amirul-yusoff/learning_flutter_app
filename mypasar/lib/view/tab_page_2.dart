@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mypasar/model/product.dart';
 import 'package:mypasar/model/user.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'edit_product_page.dart';
 import 'main_page.dart';
 import 'new_product_page.dart';
 import 'package:http/http.dart' as http;
@@ -78,15 +79,10 @@ class _TabPage2State extends State<TabPage2> {
                                 child: CachedNetworkImage(
                                   width: screenWidth,
                                   fit: BoxFit.cover,
-                                  imageUrl:
-                                      //  Striproductlist[index]['image_hash_name']
-                                      // MyConfig.server +
-                                      //     "images/products/74913db3bfc6d8ea863e865bd0639642835feb82.png",
-                                      MyConfig.server +
-                                          "images/products/" +
-                                          productlist[index]
-                                              ['image_hash_name'] +
-                                          ".png",
+                                  imageUrl: MyConfig.server +
+                                      "images/products/" +
+                                      productlist[index]['image_hash_name'] +
+                                      ".png",
                                   placeholder: (context, url) =>
                                       const CircularProgressIndicator(),
                                   // const LinearProgressIndicator(),
@@ -188,7 +184,7 @@ class _TabPage2State extends State<TabPage2> {
       });
       return;
     }
-    print(widget.user.userId);
+    // print(widget.user.userId);
     var userID = "0";
     if (widget.user.userId == null) {
       userID = "0";
@@ -203,11 +199,11 @@ class _TabPage2State extends State<TabPage2> {
       var temp = parsedJson['codeResponse'];
       if (temp == 200) {
         var extractdata = parsedJson['data'];
-        print(extractdata);
+        // print(extractdata);
         setState(() {
           productlist = extractdata;
           for (var productlistDetails in productlist) {
-            print("here");
+            // print("here");
             productlistDetails['check_image_path'] = 0;
 
             productlistDetails['image_hash_name'] =
@@ -215,7 +211,7 @@ class _TabPage2State extends State<TabPage2> {
                     ? "no_image"
                     : productlistDetails['image_hash_name'];
 
-            print(File("/php/load_sellers_product.php").existsSync());
+            // print(File("/php/load_sellers_product.php").existsSync());
           }
           numprd = productlist.length;
           if (scrollcount >= productlist.length) {
@@ -258,25 +254,26 @@ class _TabPage2State extends State<TabPage2> {
             ? "no_image"
             : productlist[index]['image_hash_name'];
     Product product = Product(
-      productId: productlist[index]['product_id'],
-      productName: productlist[index]['product_name'],
-      productDesc: productlist[index]['product_desc'],
-      productPrice: productlist[index]['product_price'],
-      productQty: productlist[index]['product_qty'],
-      userEmail: productlist[index]['user_email'],
-      productState: productlist[index]['product_state'],
-      productLoc: productlist[index]['product_loc'],
-      productLat: productlist[index]['product_lat'],
-      productLong: productlist[index]['product_long'],
-      productDate: productlist[index]['product_date'],
-    );
+        productId: productlist[index]['product_id'],
+        productName: productlist[index]['product_name'],
+        productDesc: productlist[index]['product_desc'],
+        productPrice: productlist[index]['product_price'],
+        productQty: productlist[index]['product_qty'],
+        userEmail: productlist[index]['user_email'],
+        productState: productlist[index]['product_state'],
+        productLoc: productlist[index]['product_loc'],
+        productLat: productlist[index]['product_lat'],
+        productLong: productlist[index]['product_long'],
+        productDate: productlist[index]['product_date'],
+        productHashImage: productlist[index]['image_hash_name']);
 
-    // await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (BuildContext context) => PrDetailsOwnerPage(
-    //               product: product,
-    //             )));
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => EditProductPage(
+                  product: product,
+                  user: widget.user,
+                )));
     _loadProducts();
   }
 }
