@@ -38,6 +38,7 @@ dependencies:
   shared_preferences: ^2.0.15
   fluttertoast: ^8.0.9
   ndialog: ^4.1.1+1
+  flutter_dropdown_search: ^0.0.2
 
 dev_dependencies:
   flutter_test:
