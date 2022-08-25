@@ -424,7 +424,6 @@ class _NewProductPageState extends State<NewProductPage> {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
       var responseCode = parsedJson['code'];
-      print(responseCode);
       if (responseCode == 200) {
         Fluttertoast.showToast(
             msg: "Success",

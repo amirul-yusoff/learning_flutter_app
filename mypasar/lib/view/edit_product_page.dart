@@ -603,73 +603,74 @@ class _EditProductPageState extends State<EditProductPage> {
   }
 
   void _onDeletePr() {
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return AlertDialog(
-    //       shape: const RoundedRectangleBorder(
-    //           borderRadius: BorderRadius.all(Radius.circular(20.0))),
-    //       title: const Text(
-    //         "Delete this product",
-    //         style: TextStyle(),
-    //       ),
-    //       content: const Text("Are you sure?", style: TextStyle()),
-    //       actions: <Widget>[
-    //         TextButton(
-    //           child: const Text(
-    //             "Yes",
-    //             style: TextStyle(),
-    //           ),
-    //           onPressed: () {
-    //             Navigator.of(context).pop();
-    //             _deleteProduct();
-    //           },
-    //         ),
-    //         TextButton(
-    //           child: const Text(
-    //             "No",
-    //             style: TextStyle(),
-    //           ),
-    //           onPressed: () {
-    //             Navigator.of(context).pop();
-    //           },
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: const Text(
+            "Delete this product",
+            style: TextStyle(),
+          ),
+          content: const Text("Are you sure?", style: TextStyle()),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                "Yes",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteProduct();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                "No",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _deleteProduct() {
-    // ProgressDialog progressDialog = ProgressDialog(context,
-    //     message: const Text("Deleting product.."),
-    //     title: const Text("Processing..."));
-    // progressDialog.show();
-    // http.post(Uri.parse(MyConfig.server + "/php/delete_product.php"), body: {
-    //   "prid": widget.product.productId,
-    // }).then((response) {
-    //   var data = jsonDecode(response.body);
-    //   if (response.statusCode == 200 && data['status'] == 'success') {
-    //     Fluttertoast.showToast(
-    //         msg: "Success",
-    //         toastLength: Toast.LENGTH_SHORT,
-    //         gravity: ToastGravity.BOTTOM,
-    //         timeInSecForIosWeb: 1,
-    //         fontSize: 14.0);
-    //     progressDialog.dismiss();
-    //     Navigator.of(context).pop();
-    //     return;
-    //   } else {
-    //     Fluttertoast.showToast(
-    //         msg: "Failed",
-    //         toastLength: Toast.LENGTH_SHORT,
-    //         gravity: ToastGravity.BOTTOM,
-    //         timeInSecForIosWeb: 1,
-    //         fontSize: 14.0);
-    //     progressDialog.dismiss();
-    //     return;
-    //   }
-    // });
-    // }
+    ProgressDialog progressDialog = ProgressDialog(context,
+        message: const Text("Deleting product.."),
+        title: const Text("Processing..."));
+    progressDialog.show();
+    http.post(Uri.parse(MyConfig.server + "php/delete_product_msqli.php"),
+        body: {
+          "prid": widget.product.productId,
+        }).then((response) {
+      var data = jsonDecode(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        progressDialog.dismiss();
+        Navigator.of(context).pop();
+        return;
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        progressDialog.dismiss();
+        return;
+      }
+    });
   }
 }
