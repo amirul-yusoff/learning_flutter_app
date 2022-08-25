@@ -1,6 +1,8 @@
+import 'package:app_kms/view/daily_record_list_page.dart';
 import 'package:flutter/material.dart';
 
 import 'asset_list_page.dart';
+import 'daily_record_list_by_project_page.dart';
 import 'model/user.dart';
 
 class MainPage extends StatefulWidget {
@@ -30,7 +32,7 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MY Asset List'),
+        title: const Text('Main Menu'),
       ),
       body: Center(
         child: Column(
@@ -38,7 +40,10 @@ class _MainPageState extends State<MainPage> {
             const SizedBox(height: 30),
             Flexible(
               flex: 2,
-              child: Image.asset('assets/images/image.png'),
+              child: Image.asset(
+                'assets/images/main_page.png',
+                scale: 1,
+              ),
             ),
             Flexible(
                 flex: 8,
@@ -53,7 +58,7 @@ class _MainPageState extends State<MainPage> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(40),
                         child: Material(
-                          // color: Colors.blue[100],
+                          color: Colors.blue[100],
                           elevation: 8,
                           child: InkWell(
                               highlightColor: Colors.yellow.withOpacity(0.3),
@@ -90,26 +95,64 @@ class _MainPageState extends State<MainPage> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(40),
                         child: Material(
-                          // color: Colors.blue[100],
+                          color: Colors.blue[100],
                           elevation: 8,
                           child: InkWell(
                               highlightColor: Colors.yellow.withOpacity(0.3),
                               splashColor: Colors.red.withOpacity(0.5),
                               onTap: () {
-                                print("Go to Waktu Azan");
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) =>
-                                //           const WaktuAzanPage()),
-                                // );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DailyRecordPage(user: widget.user)),
+                                );
                               },
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: const <Widget>[
                                   SizedBox(height: 40),
                                   Text(
-                                    "IT Asset",
+                                    "Daily Record",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Center(
+                                      child: Icon(
+                                    Icons.computer,
+                                    size: 80,
+                                  )),
+                                ],
+                              )),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: Material(
+                          color: Colors.blue[100],
+                          elevation: 8,
+                          child: InkWell(
+                              highlightColor: Colors.yellow.withOpacity(0.3),
+                              splashColor: Colors.red.withOpacity(0.5),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DailyRecordByProjectPage(
+                                              user: widget.user)),
+                                );
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: const <Widget>[
+                                  SizedBox(height: 40),
+                                  Text(
+                                    "Daily Record By Project",
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold),

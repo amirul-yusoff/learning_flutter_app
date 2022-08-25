@@ -7,7 +7,7 @@ import 'package:ndialog/ndialog.dart';
 
 import 'main_page.dart';
 import 'model/user.dart';
-import 'php/config.dart';
+import 'model/config.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

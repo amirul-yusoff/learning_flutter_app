@@ -1,22 +1,23 @@
 import 'dart:convert';
 
-import 'package:app_kms/view/model/assetList.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'model/user.dart';
 import 'model/config.dart';
+import 'model/dailyRecordList.dart';
+import 'model/user.dart';
 
-class AssetListPage extends StatefulWidget {
+class DailyRecordPage extends StatefulWidget {
   final User user;
-  const AssetListPage({Key? key, required this.user}) : super(key: key);
+  const DailyRecordPage({Key? key, required this.user}) : super(key: key);
 
   @override
-  State<AssetListPage> createState() => _AssetListPageState();
+  State<DailyRecordPage> createState() => _DailyRecordPageState();
 }
 
-class _AssetListPageState extends State<AssetListPage> {
+class _DailyRecordPageState extends State<DailyRecordPage> {
   List assetlist = [];
-  String titlecenter = "Loading Asset List...";
+  List dailyRecordlist = [];
+  String titlecenter = "Loading Daily Record List...";
   late double screenHeight, screenWidth, resWidth;
   final df = '';
   late ScrollController _scrollController;
@@ -46,7 +47,7 @@ class _AssetListPageState extends State<AssetListPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('MY Asset List'),
+          title: const Text('Daily Record'),
         ),
         body: assetlist.isEmpty
             ? Center(
@@ -72,22 +73,6 @@ class _AssetListPageState extends State<AssetListPage> {
                           onTap: () => {_prodDetails(index)},
                           child: Column(
                             children: [
-                              // Flexible(
-                              // flex: 6,
-                              // child:
-                              // CachedNetworkImage(
-                              //   width: screenWidth,
-                              //   fit: BoxFit.cover,
-                              //   imageUrl: MyConfig.server +
-                              //       "/mypasar/images/products/" +
-                              //       assetlist[index]['product_id'] +
-                              //       ".png",
-                              //   placeholder: (context, url) =>
-                              //       const LinearProgressIndicator(),
-                              //   errorWidget: (context, url, error) =>
-                              //       const Icon(Icons.error),
-                              // ),
-                              // ),
                               Flexible(
                                   flex: 4,
                                   child: Padding(
@@ -96,14 +81,18 @@ class _AssetListPageState extends State<AssetListPage> {
                                       children: [
                                         Text(
                                             truncateString(assetlist[index]
-                                                    ['device_name']
+                                                    ['daily_record_id']
                                                 .toString()),
                                             style: TextStyle(
                                                 fontSize: resWidth * 0.045,
                                                 fontWeight: FontWeight.bold)),
-                                        Text(truncateString(assetlist[index]
-                                                ['serial_number']
-                                            .toString())),
+                                        Text(
+                                            truncateString(assetlist[index]
+                                                    ['project_code']
+                                                .toString()),
+                                            style: TextStyle(
+                                                fontSize: resWidth * 0.045,
+                                                fontWeight: FontWeight.bold)),
                                       ],
                                     ),
                                   )),
@@ -117,6 +106,15 @@ class _AssetListPageState extends State<AssetListPage> {
               ));
   }
 
+  String truncateString(String str) {
+    if (str.length > 15) {
+      str = str.substring(0, 15);
+      return str + "...";
+    } else {
+      return str;
+    }
+  }
+
   void _loadProducts() {
     if (widget.user.username == "na") {
       setState(() {
@@ -124,20 +122,12 @@ class _AssetListPageState extends State<AssetListPage> {
       });
       return;
     }
-    var userID = "0";
-    if (widget.user.username == null) {
-      userID = "0";
-    } else {
-      userID = widget.user.username.toString();
-    }
-    http.post(Uri.parse(MyConfig.server + "/asset_list.php"),
-        body: {'username': userID}).then((response) {
+    http.post(Uri.parse(MyConfig.server + "/daily_record_list.php"),
+        body: {'username': widget.user.username.toString()}).then((response) {
       var jsonData = response.body;
       var parsedJson = json.decode(jsonData);
-      var temp = parsedJson['codeResponse'];
-      if (temp == 200) {
+      if (response.statusCode == 200) {
         var extractdata = parsedJson['data'];
-        print(extractdata);
         setState(() {
           assetlist = extractdata;
           numprd = assetlist.length;
@@ -153,42 +143,6 @@ class _AssetListPageState extends State<AssetListPage> {
     });
   }
 
-  String truncateString(String str) {
-    if (str.length > 15) {
-      str = str.substring(0, 15);
-      return str + "...";
-    } else {
-      return str;
-    }
-  }
-
-  _prodDetails(int index) async {
-    AssetList product = AssetList(
-      id: assetlist[index]['id'],
-      deviceName: assetlist[index]['device_name'],
-      buyDate: assetlist[index]['buy_date'],
-      description: assetlist[index]['description'],
-      warrantyStart: assetlist[index]['warranty_start'],
-      warrantyEnd: assetlist[index]['warranty_end'],
-      supplier: assetlist[index]['supplier'],
-      poName: assetlist[index]['po_name'],
-      createdBy: assetlist[index]['created_by'],
-      ram: assetlist[index]['ram'],
-      capacity: assetlist[index]['capacity'],
-      processor: assetlist[index]['processor'],
-      serialNumber: assetlist[index]['serial_number'],
-      department: assetlist[index]['department'],
-    );
-
-    // await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (BuildContext context) => PrDetailsOwnerPage(
-    //               product: product,
-    //             )));
-    _loadProducts();
-  }
-
   _scrollListener() {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
@@ -202,5 +156,23 @@ class _AssetListPageState extends State<AssetListPage> {
         }
       });
     }
+  }
+
+  _prodDetails(int index) async {
+    print("prodDetails");
+    DailyRecordList dailyRecordList = DailyRecordList(
+      daily_record_id: assetlist[index]['daily_record_id'],
+      serial_no: assetlist[index]['serial_no'],
+      project_code: assetlist[index]['project_code'],
+      site_activity: assetlist[index]['site_activity'],
+    );
+
+    // await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (BuildContext context) => PrDetailsOwnerPage(
+    //               product: product,
+    //             )));
+    _loadProducts();
   }
 }

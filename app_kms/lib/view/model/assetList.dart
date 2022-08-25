@@ -64,5 +64,6 @@ class AssetList {
     data['serial_number'] = this.serialNumber;
     data['department'] = this.department;
     return data;
+    
   }
 }

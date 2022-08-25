@@ -34,12 +34,13 @@ class _SplashPageState extends State<SplashPage> {
                   fit: BoxFit.cover)),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(0, 50, 0, 20),
+          padding: const EdgeInsets.fromLTRB(0, 80, 0, 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                "App KMS",
+                "JTKMS APPLICATION",
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
