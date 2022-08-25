@@ -12,6 +12,7 @@ class Product {
   String? productLong;
   String? productDate;
   String? productHashImage;
+  String? productOwnerName;
 
   Product(
       {this.productId,
@@ -26,6 +27,7 @@ class Product {
       this.productLat,
       this.productLong,
       this.productHashImage,
+      this.productOwnerName,
       this.productDate});
 
   Product.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,7 @@ class Product {
     productLong = json['product_long'];
     productDate = json['product_date'];
     productHashImage = json['image_hash_name'];
+    productOwnerName = json['user_join_username'];
   }
 
   Map<String, dynamic> toJson() {
