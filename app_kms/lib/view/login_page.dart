@@ -188,6 +188,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _loginUser() {
     FocusScope.of(context).requestFocus(FocusNode());
+    FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) {
       Fluttertoast.showToast(
           msg: "Please fill in the login credentials",
@@ -195,6 +196,7 @@ class _LoginPageState extends State<LoginPage> {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           fontSize: 14.0);
+      _isChecked = false;
       return;
     }
     ProgressDialog progressDialog = ProgressDialog(context,
@@ -205,44 +207,35 @@ class _LoginPageState extends State<LoginPage> {
     String _pass = _passEditingController.text;
     http.post(Uri.parse(MyConfig.server + "/login_user.php"),
         body: {"username": _username, "password": _pass}).then((response) {
-      var jsonData = response.body;
-      var parsedJson = json.decode(jsonData);
-      var temp = parsedJson['responseCode'];
+      print(response.statusCode);
 
-      if (temp == 200) {
-        final jsonResponse = json.decode(response.body);
-        User user = User.fromJson(jsonResponse['data']);
-        var error = parsedJson['responseMessage'];
+      var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        User user = User.fromJson(jsondata['data']);
         Fluttertoast.showToast(
-            msg: error,
+            msg: "Login Success",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
+        progressDialog.dismiss();
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => MainPage(user: user)));
-      } else if (temp == -100) {
-        var error = parsedJson['responseMessage'];
-        Fluttertoast.showToast(
-            msg: error,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-        return;
+                builder: (BuildContext context) => MainPage(
+                      user: user,
+                    )));
       } else {
         Fluttertoast.showToast(
-            msg: "There are error in Log in",
+            msg: "Login Failed",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
-        return;
+        progressDialog.dismiss();
       }
+      progressDialog.dismiss();
     });
-    progressDialog.dismiss();
   }
 
   void saveremovepref(bool value) async {
