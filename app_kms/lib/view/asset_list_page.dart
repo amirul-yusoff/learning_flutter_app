@@ -15,6 +15,9 @@ class AssetListPage extends StatefulWidget {
 }
 
 class _AssetListPageState extends State<AssetListPage> {
+  @override
+  // This holds a list of fiction users
+  // You can use data fetched from a database or a server as well
   final List<Map<String, dynamic>> _allUsers = [
     {"id": 1, "name": "Andy", "age": 29},
     {"id": 2, "name": "Aragon", "age": 40},
@@ -32,6 +35,7 @@ class _AssetListPageState extends State<AssetListPage> {
   List<Map<String, dynamic>> _foundUsers = [];
   @override
   initState() {
+    // at the beginning, all users are shown
     _foundUsers = _allUsers;
     super.initState();
   }
@@ -42,23 +46,25 @@ class _AssetListPageState extends State<AssetListPage> {
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
       results = _allUsers;
-      print(results);
     } else {
       results = _allUsers
           .where((user) =>
               user["name"].toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();
-      print(results);
-
       // we use the toLowerCase() method to make it case-insensitive
     }
+
+    // Refresh the UI
+    setState(() {
+      _foundUsers = results;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search Listview'),
+        title: const Text('Kindacode.com'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -81,20 +87,17 @@ class _AssetListPageState extends State<AssetListPage> {
                       itemCount: _foundUsers.length,
                       itemBuilder: (context, index) => Card(
                         key: ValueKey(_foundUsers[index]["id"]),
-                        color: Colors.blue,
+                        color: Colors.amberAccent,
                         elevation: 4,
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: ListTile(
                           leading: Text(
                             _foundUsers[index]["id"].toString(),
-                            style: const TextStyle(
-                                fontSize: 24, color: Colors.white),
+                            style: const TextStyle(fontSize: 24),
                           ),
-                          title: Text(_foundUsers[index]['name'],
-                              style: TextStyle(color: Colors.white)),
+                          title: Text(_foundUsers[index]['name']),
                           subtitle: Text(
-                              '${_foundUsers[index]["age"].toString()} years old',
-                              style: TextStyle(color: Colors.white)),
+                              '${_foundUsers[index]["age"].toString()} years old'),
                         ),
                       ),
                     )
