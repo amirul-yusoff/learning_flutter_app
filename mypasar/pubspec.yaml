@@ -42,6 +42,8 @@ dependencies:
 
   flutter:
     sdk: flutter
+  url_launcher: ^6.0.17
+  
   
   
   

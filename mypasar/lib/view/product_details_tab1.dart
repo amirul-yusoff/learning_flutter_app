@@ -8,6 +8,8 @@ import 'package:mypasar/model/config.dart';
 import 'package:mypasar/model/user.dart';
 import 'package:mypasar/model/product.dart';
 import 'package:http/http.dart' as http;
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final Product product;
@@ -205,7 +207,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         break;
       case 5:
         // print('5');
-        // _showMapDialogue();
+        _showMapDialogue();
         break;
       default:
       // print('choose a different number!');
@@ -218,7 +220,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       path: phoneNumber,
     );
     // ignore: deprecated_member_use
-    // await launch(launchUri.toString());
+    await launch(launchUri.toString());
   }
 
   Future<void> _sendSms(String phoneNumber) async {
@@ -226,7 +228,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       scheme: 'sms',
       path: phoneNumber,
     );
-    // await launch(launchUri.toString());
+    // ignore: deprecated_member_use
+    await launch(launchUri.toString());
   }
 
   int generateIds() {
@@ -236,6 +239,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     return randomInt;
   }
 
+  void _showMapDialogue() {}
   // void _showMapDialogue() {
   //   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   //   Completer<GoogleMapController> _controller = Completer();
@@ -307,6 +311,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       if (response.statusCode == 200 && jsondata['status'] == 'success') {
         setState(() {
           user = User.fromJson(jsondata['data']);
+          print("_loadOwner");
+          print(_loadOwner);
         });
       }
     });
