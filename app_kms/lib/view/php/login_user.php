@@ -21,19 +21,19 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
 	// Check if SHA1
 	$password = sha1($_POST["password"]);
 
-	$stmt = $pdo->prepare("SELECT id, employee_code, firstname, mbr_email, lastname, nickname, department, position, username,  status, isdelete FROM members WHERE username = ? AND password = ?");
+	$stmt = $pdo->prepare("SELECT id,employee_name, employee_code, firstname, mbr_email, lastname, nickname, department, position, username,  status, isdelete FROM members WHERE username = ? AND password = ?");
 	$stmt->execute([$username, $password]);
 	$validLogin = $stmt->rowCount();
 
 	if ($validLogin == 0) {
 		// If fails on sha1 login, does bcrypt verification
-		$stmtBcrypt = $pdo->prepare("SELECT id, employee_code, firstname, mbr_email, lastname, nickname, department, position, username,  status, isdelete, password FROM members WHERE username = ?");
+		$stmtBcrypt = $pdo->prepare("SELECT id,employee_name, employee_code, firstname, mbr_email, lastname, nickname, department, position, username,  status, isdelete, password FROM members WHERE username = ?");
 		$stmtBcrypt->execute([$username]);
 		$checkBcrypt = $stmtBcrypt->rowCount();
 		while($rowBcrypt = $stmtBcrypt->fetch(PDO::FETCH_ASSOC)) {
 			$password = $rowBcrypt['password'];
 			if (password_verify($_POST["password"], $password)) {
-				$stmt = $pdo->prepare("SELECT id, employee_code, firstname, mbr_email, lastname, nickname, department, position, username,  status, isdelete FROM members WHERE username = ?");
+				$stmt = $pdo->prepare("SELECT id,employee_name, employee_code, firstname, mbr_email, lastname, nickname, department, position, username,  status, isdelete FROM members WHERE username = ?");
 				$stmt->execute([$username]);
 				$validLogin = $stmt->rowCount();
 			} else {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'asset_list_page.dart';
 import 'daily_record_list_by_project_page.dart';
 import 'model/user.dart';
+import 'profile_page.dart';
 
 class MainPage extends StatefulWidget {
   final User user;
@@ -54,6 +55,43 @@ class _MainPageState extends State<MainPage> {
                   crossAxisCount: 2,
                   childAspectRatio: ((itemWidth / itemHeight) * 2),
                   children: [
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: Material(
+                          color: Colors.blue[100],
+                          elevation: 8,
+                          child: InkWell(
+                              highlightColor: Colors.yellow.withOpacity(0.3),
+                              splashColor: Colors.red.withOpacity(0.5),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          UserProfilePage(user: widget.user)),
+                                );
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: const <Widget>[
+                                  SizedBox(height: 40),
+                                  Text(
+                                    "Profile",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Center(
+                                      child: Icon(
+                                    Icons.person,
+                                    size: 80,
+                                  )),
+                                ],
+                              )),
+                        ),
+                      ),
+                    ),
                     Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(40),
@@ -120,7 +158,7 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                   Center(
                                       child: Icon(
-                                    Icons.computer,
+                                    Icons.construction_rounded,
                                     size: 80,
                                   )),
                                 ],
@@ -159,7 +197,7 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                   Center(
                                       child: Icon(
-                                    Icons.computer,
+                                    Icons.home_work_rounded,
                                     size: 80,
                                   )),
                                 ],

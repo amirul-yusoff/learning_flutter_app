@@ -1,6 +1,7 @@
 class User {
   int? id;
   String? employeeCode;
+  String? employeeName;
   String? firstname;
   String? mbrEmail;
   String? lastname;
@@ -13,6 +14,7 @@ class User {
 
   User(
       {this.id,
+      this.employeeName,
       this.employeeCode,
       this.firstname,
       this.mbrEmail,
@@ -28,6 +30,7 @@ class User {
     print("json");
     print(json);
     id = json['id'];
+    employeeName = json['employee_name'];
     employeeCode = json['employee_code'];
     firstname = json['firstname'];
     mbrEmail = json['mbr_email'];
