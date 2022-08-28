@@ -16,7 +16,7 @@ require_once('config.ini.php');
 	}
 	
 
-$projectQuery = $pdo->prepare("SELECT * FROM project_registry WHERE Project_Status = 'Work In Progress' || Project_Status = 'Active' || Project_Status = 'TOC/CPC' || Project_Status = 'CC/CMGD' ORDER BY Project_ID DESC");
+$projectQuery = $pdo->prepare("SELECT * FROM project_registry  ORDER BY Project_ID DESC");
 $projectQuery->execute();
 $count = $projectQuery->rowCount();
 if ($count > 0)
