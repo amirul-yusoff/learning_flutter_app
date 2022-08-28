@@ -17,7 +17,6 @@ class ProjectRegistryPage extends StatefulWidget {
 
 class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
   List<Map<String, dynamic>> _allProject = [];
-  List<Map<String, dynamic>> _allUsers = [];
   List<Map<String, dynamic>> _foundUsers = [];
 
   Future getAllCategory() async {
