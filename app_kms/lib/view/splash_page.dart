@@ -30,7 +30,7 @@ class _SplashPageState extends State<SplashPage> {
         Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/splash.png'),
+                  image: AssetImage('assets/images/background.png'),
                   fit: BoxFit.cover)),
         ),
         Padding(
