@@ -1,10 +1,9 @@
-import 'package:app_kms/view/daily_record_list_page.dart';
+import 'package:app_kms/view/daily_record_page/daily_record_page_main.dart';
 import 'package:app_kms/view/project_page/project_page_main.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 
 import 'asset_list_page.dart';
-import 'daily_record_list_by_project_page.dart';
 import 'login_page.dart';
 import 'model/user.dart';
 import 'profile_page.dart';
@@ -184,8 +183,8 @@ class _MainPageState extends State<MainPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          DailyRecordPage(user: widget.user)),
+                                      builder: (context) => DailyRecordMainPage(
+                                          user: widget.user)),
                                 );
                               },
                               child: Column(
@@ -201,45 +200,6 @@ class _MainPageState extends State<MainPage> {
                                   Center(
                                       child: Icon(
                                     Icons.construction_rounded,
-                                    size: 80,
-                                  )),
-                                ],
-                              )),
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: Material(
-                          color: Colors.blue[100],
-                          elevation: 8,
-                          child: InkWell(
-                              highlightColor: Colors.yellow.withOpacity(0.3),
-                              splashColor: Colors.red.withOpacity(0.5),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          DailyRecordByProjectPage(
-                                              user: widget.user)),
-                                );
-                              },
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: const <Widget>[
-                                  SizedBox(height: 40),
-                                  Text(
-                                    "Daily Record By Project",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Center(
-                                      child: Icon(
-                                    Icons.home_work_rounded,
                                     size: 80,
                                   )),
                                 ],

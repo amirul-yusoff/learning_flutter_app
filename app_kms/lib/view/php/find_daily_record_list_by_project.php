@@ -15,10 +15,12 @@ require_once('config.ini.php');
 		exit('Something weird happened'); //something a user can understand
 	}
 	
+$projectCode = $_POST["projectCode"];
 
-$projectQuery = $pdo->prepare("SELECT * FROM daily_record  ORDER BY daily_record_id DESC");
-$projectQuery->execute();
+$projectQuery = $pdo->prepare("SELECT * FROM daily_record  WHERE project_code = ? ORDER BY daily_record_id DESC");
+$projectQuery->execute([$projectCode]);
 $count = $projectQuery->rowCount();
+$projectRows=[];
 if ($count > 0)
 {
     while($rows = $projectQuery->fetch(PDO::FETCH_ASSOC))
@@ -28,5 +30,5 @@ if ($count > 0)
 }
 
 
-echo json_encode(array("Response" => array("responseCode" => 200, "responseMessage" => "Query result success"), "project_data" => $projectRows));
+echo json_encode(array("Response" => array("responseCode" => 200, "responseMessage" => "Query result success"), "project_data" => $projectRows , "count" => $count));
 ?>

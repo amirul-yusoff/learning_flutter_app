@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:app_kms/view/model/config.dart';
+import 'package:app_kms/view/model/dailyRecordList.dart';
+import 'package:app_kms/view/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'model/config.dart';
-import 'model/dailyRecordList.dart';
-import 'model/user.dart';
 
 class DailyRecordPage extends StatefulWidget {
   final User user;
@@ -167,12 +167,6 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
       site_activity: assetlist[index]['site_activity'],
     );
 
-    // await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (BuildContext context) => PrDetailsOwnerPage(
-    //               product: product,
-    //             )));
     _loadProducts();
   }
 }
