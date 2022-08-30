@@ -116,4 +116,6 @@ class ProjectDetails {
     this.license_fee_amount,
     this.license_fee_percentage,
   );
+
+  
 }

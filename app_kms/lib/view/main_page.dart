@@ -37,6 +37,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Main Menu'),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(

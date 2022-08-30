@@ -232,12 +232,7 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
     http.post(Uri.parse(MyConfig.server + "/project_code_find_id.php"), body: {
       "projectid": ProjectID.toString(),
     }).then((response) {
-      print("response.statusCode");
-      print(response.statusCode);
-
       var jsondata = jsonDecode(response.body);
-      print("jsondata");
-      print(jsondata);
     });
     Navigator.push(
         context,
