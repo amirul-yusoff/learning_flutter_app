@@ -1,4 +1,5 @@
 import 'package:app_kms/view/daily_record_list_page.dart';
+import 'package:app_kms/view/project_page/project_page_main.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 
@@ -7,7 +8,6 @@ import 'daily_record_list_by_project_page.dart';
 import 'login_page.dart';
 import 'model/user.dart';
 import 'profile_page.dart';
-import 'project_page.dart';
 
 class MainPage extends StatefulWidget {
   final User user;
@@ -146,8 +146,9 @@ class _MainPageState extends State<MainPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProjectRegistryPage(
-                                          user: widget.user)),
+                                      builder: (context) =>
+                                          ProjectRegistryMainPage(
+                                              user: widget.user)),
                                 );
                               },
                               child: Column(

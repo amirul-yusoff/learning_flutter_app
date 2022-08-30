@@ -1,23 +1,23 @@
 import 'dart:convert';
 
+import 'package:app_kms/view/model/config.dart';
 import 'package:app_kms/view/model/projectDetails.dart';
+import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/view/project_page/project_page_details.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:ndialog/ndialog.dart';
-import 'model/config.dart';
-import 'model/user.dart';
-import 'project_page_details.dart';
 
-class ProjectRegistryPage extends StatefulWidget {
+class ProjetExpiredPage extends StatefulWidget {
   final User user;
-  const ProjectRegistryPage({Key? key, required this.user}) : super(key: key);
+  const ProjetExpiredPage({Key? key, required this.user}) : super(key: key);
 
   @override
-  State<ProjectRegistryPage> createState() => _ProjectRegistryPageState();
+  State<ProjetExpiredPage> createState() => _ProjetExpiredPageState();
 }
 
-class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
+class _ProjetExpiredPageState extends State<ProjetExpiredPage> {
   List<Map<String, dynamic>> _allProject = [];
   List<Map<String, dynamic>> _foundUsers = [];
 
@@ -26,7 +26,7 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
         message: const Text("Please wait.."),
         title: const Text("Fetching Data"));
     progressDialog.show();
-    var baseUrl = MyConfig.server + "/project_code_list.php";
+    var baseUrl = MyConfig.server + "/project_code_expired_list.php";
 
     http.Response response = await http.get(Uri.parse(baseUrl));
 
@@ -51,7 +51,7 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
 
   // This function is called whenever the text field changes
   Future<void> _runFilter(String enteredKeyword) async {
-    var baseUrl = MyConfig.server + "/project_code_list.php";
+    var baseUrl = MyConfig.server + "/project_code_expired_list.php";
 
     http.Response response = await http.get(Uri.parse(baseUrl));
 
@@ -99,7 +99,7 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Project'),
+        title: const Text('Project Expired'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -115,6 +115,7 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
                       'Search Project (Please insert more than 3 caharacter)',
                   suffixIcon: Icon(Icons.search)),
             ),
+            Text("Result Found : " + _foundUsers.length.toString()),
             const SizedBox(
               height: 20,
             ),

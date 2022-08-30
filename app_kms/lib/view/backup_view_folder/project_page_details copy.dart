@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:app_kms/view/model/config.dart';
 import 'package:app_kms/view/model/projectDetails.dart';
+import 'package:app_kms/view/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'model/config.dart';
-import 'model/user.dart';
 
 class ProjectDetailsPage extends StatefulWidget {
   final User user;
