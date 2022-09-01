@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_kms/custom_button/custom_button_find_data.dart';
 import 'package:app_kms/view/model/config.dart';
 import 'package:app_kms/view/model/user.dart';
 import 'package:flutter/material.dart';
@@ -95,9 +96,9 @@ class _DailyRecordByDateState extends State<DailyRecordByDate> {
                 },
               ),
               const SizedBox(height: 5),
-              ElevatedButton(
-                  onPressed: _checkDailyRecord,
-                  child: const Text("Check Daily Record")),
+              CustomFindDataButton(
+                onPressed: _checkDailyRecord,
+              ),
               Text("Result Found : " + _foundUsers.length.toString()),
               const SizedBox(
                 height: 10,
