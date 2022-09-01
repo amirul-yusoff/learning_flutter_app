@@ -1,3 +1,4 @@
+import 'package:app_kms/view/daily_record_page/daily_record_list_by_date.dart';
 import 'package:app_kms/view/daily_record_page/daily_record_list_by_project_page.dart';
 import 'package:app_kms/view/daily_record_page/daily_record_list_page.dart';
 import 'package:app_kms/view/model/user.dart';
@@ -109,6 +110,44 @@ class _DailyRecordMainPageState extends State<DailyRecordMainPage> {
                                   SizedBox(height: 40),
                                   Text(
                                     "Daily Record By project",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Center(
+                                      child: Icon(
+                                    Icons.list,
+                                    size: 80,
+                                  )),
+                                ],
+                              )),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: Material(
+                          color: Colors.blue[100],
+                          elevation: 8,
+                          child: InkWell(
+                              highlightColor: Colors.yellow.withOpacity(0.3),
+                              splashColor: Colors.red.withOpacity(0.5),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DailyRecordByDate(user: widget.user)),
+                                );
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: const <Widget>[
+                                  SizedBox(height: 40),
+                                  Text(
+                                    "Daily Record By Date",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 20,
