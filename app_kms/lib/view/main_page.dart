@@ -32,6 +32,16 @@ class _MainPageState extends State<MainPage> {
     /*24 is for notification bar on Android*/
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    int rowcount = 2;
+    if (screenWidth <= 600) {
+      resWidth = screenWidth;
+      rowcount = 2;
+    } else {
+      resWidth = screenWidth * 0.75;
+      rowcount = 3;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -55,8 +65,7 @@ class _MainPageState extends State<MainPage> {
                   padding: const EdgeInsets.all(20),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  crossAxisCount: 2,
-                  childAspectRatio: ((itemWidth / itemHeight) * 2),
+                  crossAxisCount: rowcount,
                   children: [
                     Center(
                       child: ClipRRect(

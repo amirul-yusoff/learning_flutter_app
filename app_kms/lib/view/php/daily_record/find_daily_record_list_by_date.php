@@ -18,7 +18,7 @@ require_once('config.ini.php');
 $startDate = $_POST["startDate"];
 $endDate = $_POST["endDate"];
 
-$projectQuery = $pdo->prepare("SELECT * FROM daily_record  WHERE daily_record_date between ? and ? ORDER BY daily_record_id DESC");
+$projectQuery = $pdo->prepare("SELECT * FROM daily_record  WHERE daily_record_date >= ? and daily_record_date <= ? ORDER BY daily_record_id DESC");
 $projectQuery->execute([$startDate,$endDate]);
 $count = $projectQuery->rowCount();
 $projectRows=[];

@@ -33,7 +33,7 @@ class _DailyRecordByDateState extends State<DailyRecordByDate> {
   initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      getAllCategory();
+      // getAllCategory();
       getAllDailyRecordByDate();
     });
   }
@@ -155,48 +155,52 @@ class _DailyRecordByDateState extends State<DailyRecordByDate> {
         ));
   }
 
-  Future getAllCategory() async {
-    var baseUrl = MyConfig.server + "/project_code_list.php";
+  // Future getAllCategory() async {
+  //   print("dateStartselected");
+  //   print(dateStartselected);
+  //   print(dateEndselected);
 
-    http.Response response = await http.get(Uri.parse(baseUrl));
-    if (response.statusCode == 200) {
-      var jsonData = json.decode(response.body);
-      setState(() {
-        _kOptions = List<String>.from(jsonData['project_data']
-            .map((project) =>
-                project['Project_Code'].toString() +
-                "-" +
-                project['Project_Short_name'].toString())
-            .toList());
-      });
-    }
-  }
+  //   var baseUrl = MyConfig.server + "/project_code_list.php";
+
+  //   http.Response response = await http.get(Uri.parse(baseUrl));
+  //   if (response.statusCode == 200) {
+  //     var jsonData = json.decode(response.body);
+  //     setState(() {
+  //       _kOptions = List<String>.from(jsonData['project_data']
+  //           .map((project) =>
+  //               project['Project_Code'].toString() +
+  //               "-" +
+  //               project['Project_Short_name'].toString())
+  //           .toList());
+  //     });
+  //   }
+  // }
 
   Future getAllDailyRecordByDate() async {
     ProgressDialog progressDialog = ProgressDialog(context,
         message: const Text("Please wait.."),
         title: const Text("Fetching Data"));
     progressDialog.show();
-    var baseUrl = MyConfig.server + "/daily_record_list.php";
+    http.post(
+        Uri.parse(MyConfig.server + "/find_daily_record_list_by_date.php"),
+        body: {
+          "startDate": dateStartselected,
+          "endDate": dateEndselected
+        }).then((response) {
+      var jsondata = jsonDecode(response.body);
 
-    http.Response response = await http.get(Uri.parse(baseUrl));
-
-    if (response.statusCode == 200) {
-      var jsonData = json.decode(response.body);
-
-      setState(() {
-        var streetsFromJson = jsonData['project_data'];
-        _foundUsers = List<Map<String, dynamic>>.from((streetsFromJson));
-      });
-    }
-    progressDialog.dismiss();
+      if (response.statusCode == 200) {
+        setState(() {
+          var streetsFromJson = jsondata['project_data'];
+          _foundUsers = List<Map<String, dynamic>>.from((streetsFromJson));
+        });
+      }
+      progressDialog.dismiss();
+    });
+    ;
   }
 
   Future<void> _checkDailyRecord() async {
-    print("dateStartselected");
-    print(dateStartselected);
-    print("dateEndselected");
-    print(dateEndselected);
     ProgressDialog progressDialog = ProgressDialog(context,
         message: const Text("Please wait.."),
         title: const Text("Fetching Data"));
