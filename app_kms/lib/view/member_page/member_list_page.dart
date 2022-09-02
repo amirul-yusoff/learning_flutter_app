@@ -1,37 +1,36 @@
 import 'dart:convert';
 
-import 'package:app_kms/view/daily_record_page/daily_record_details_page.dart';
 import 'package:app_kms/view/model/config.dart';
-import 'package:app_kms/view/model/dailyRecordList.dart';
+import 'package:app_kms/view/model/projectDetails.dart';
 import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/view/project_page/project_page_details.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:ndialog/ndialog.dart';
 
-class DailyRecordByProjectPage extends StatefulWidget {
+class MemberListPage extends StatefulWidget {
   final User user;
-  const DailyRecordByProjectPage({Key? key, required this.user})
-      : super(key: key);
+  const MemberListPage({Key? key, required this.user}) : super(key: key);
 
   @override
-  State<DailyRecordByProjectPage> createState() =>
-      _DailyRecordByProjectPageState();
+  State<MemberListPage> createState() => _MemberListPageState();
 }
 
-class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
+class _MemberListPageState extends State<MemberListPage> {
   List<Map<String, dynamic>> _allProject = [];
   List<Map<String, dynamic>> _foundUsers = [];
   List<String> _kOptions = <String>[
-    'T3308',
+    ' ',
   ];
+  var selection = null;
 
   @override
   initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       getAllCategory();
-      getAllDailyRecord();
+      getAllMemberList(selection);
     });
   }
 
@@ -41,7 +40,7 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
     // print(_kOptions);
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Daily Record By Project'),
+          title: const Text('Member List'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -60,8 +59,8 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
                   });
                 },
                 onSelected: (String selection) {
-                  _getProjectCode(selection);
-                  // debugPrint('You just selected $selection');
+                  findMember(selection);
+                  debugPrint('You just selected $selection');
                 },
               ),
               Text("Result Found : " + _foundUsers.length.toString()),
@@ -73,13 +72,9 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
                     ? ListView.builder(
                         itemCount: _foundUsers.length,
                         itemBuilder: (context, index) => GestureDetector(
-                          onTap: () => {
-                            _getProjectInfo(_foundUsers[index]
-                                    ["daily_record_id"]
-                                .toString())
-                          },
+                          onTap: () => {_getUserInfo(index)},
                           child: Card(
-                            key: ValueKey(_foundUsers[index]["project_code"]),
+                            key: ValueKey(_foundUsers[index]["employee_code"]),
                             // color: Colors.amberAccent,
                             elevation: 4,
                             shape: const RoundedRectangleBorder(
@@ -93,20 +88,16 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
                               // height: 100,
                               child: ListTile(
                                 leading: Text(
-                                  _foundUsers[index]["project_code"].toString(),
+                                  _foundUsers[index]["employee_code"]
+                                      .toString(),
                                   style: const TextStyle(fontSize: 24),
                                 ),
-                                title: Text("Serial No : " +
-                                    _foundUsers[index]['serial_no'].toString() +
-                                    "\n(" +
-                                    _foundUsers[index]['record_date']
-                                        .toString() +
-                                    ")\n"),
-                                subtitle: Text(_foundUsers[index]
-                                        ["site_activity"]
+                                title: Text(_foundUsers[index]['employee_name']
                                     .toString()),
+                                subtitle: Text(
+                                    _foundUsers[index]["email"].toString()),
                                 trailing: Text(
-                                    _foundUsers[index]['record_by'].toString()),
+                                    _foundUsers[index]['username'].toString()),
                               ),
                             ),
                           ),
@@ -123,7 +114,7 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
   }
 
   Future getAllCategory() async {
-    var baseUrl = MyConfig.server + "/project_code_list.php";
+    var baseUrl = MyConfig.server + "/members_list.php";
 
     http.Response response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
@@ -131,43 +122,25 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
       setState(() {
         _kOptions = List<String>.from(jsonData['project_data']
             .map((project) =>
-                project['Project_Code'].toString() +
+                project['id'].toString() +
                 "-" +
-                project['Project_Short_name'].toString())
+                project['employee_code'].toString() +
+                "-" +
+                project['employee_name'].toString())
             .toList());
       });
     }
   }
 
-  Future getAllDailyRecord() async {
+  Future getAllMemberList(selection) async {
     ProgressDialog progressDialog = ProgressDialog(context,
         message: const Text("Please wait.."),
         title: const Text("Fetching Data"));
     progressDialog.show();
-    var baseUrl = MyConfig.server + "/daily_record_list.php";
-
-    http.Response response = await http.get(Uri.parse(baseUrl));
-
-    if (response.statusCode == 200) {
-      var jsonData = json.decode(response.body);
-
-      setState(() {
-        var streetsFromJson = jsonData['project_data'];
-        _foundUsers = List<Map<String, dynamic>>.from((streetsFromJson));
-      });
-    }
-    progressDialog.dismiss();
-  }
-
-  _getProjectCode(String projectCode) {
-    var afterSplit = projectCode.split('-');
-    http.post(
-        Uri.parse(MyConfig.server + "/find_daily_record_list_by_project.php"),
-        body: {
-          "projectCode": afterSplit[0].toString(),
-        }).then((response) {
+    http.post(Uri.parse(MyConfig.server + "/members_list.php"), body: {}).then(
+        (response) {
       var jsondata = jsonDecode(response.body);
-      print(jsondata);
+
       if (response.statusCode == 200) {
         Fluttertoast.showToast(
             msg: "Found",
@@ -177,7 +150,6 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
             fontSize: 14.0);
         setState(() {
           var streetsFromJson = jsondata['project_data'];
-          print(streetsFromJson);
           _foundUsers = List<Map<String, dynamic>>.from((streetsFromJson));
         });
       } else {
@@ -188,32 +160,32 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
       }
+      progressDialog.dismiss();
     });
   }
 
-  void _getProjectInfo(String dailyRecordID) {
-    print(dailyRecordID);
-
-    http.post(Uri.parse(MyConfig.server + "/daily_record_details.php"),
-        body: {"dailyRecordID": dailyRecordID}).then((response) {
-      print(response.statusCode);
-
+  Future findMember(selection) async {
+    var afterSplit = selection.split('-');
+    ProgressDialog progressDialog = ProgressDialog(context,
+        message: const Text("Please wait.."),
+        title: const Text("Fetching Data"));
+    progressDialog.show();
+    http.post(Uri.parse(MyConfig.server + "/find_members_list.php"), body: {
+      "userId": afterSplit[0].toString(),
+    }).then((response) {
       var jsondata = jsonDecode(response.body);
+
       if (response.statusCode == 200) {
-        var streetsFromJson = jsondata['project_data'][0];
-        DailyRecordList dailyRecordList =
-            DailyRecordList.fromJson(streetsFromJson);
         Fluttertoast.showToast(
             msg: "Found",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => DailyRecordDetails(
-                    user: widget.user, dailyRecordList: dailyRecordList)));
+        setState(() {
+          var streetsFromJson = jsondata['project_data'];
+          _foundUsers = List<Map<String, dynamic>>.from((streetsFromJson));
+        });
       } else {
         Fluttertoast.showToast(
             msg: "Failed",
@@ -222,6 +194,11 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
       }
+      progressDialog.dismiss();
     });
+  }
+
+  void _getUserInfo(int index) {
+    
   }
 }
