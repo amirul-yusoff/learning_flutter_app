@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:app_kms/view/member_page/member_details_page.dart';
 import 'package:app_kms/view/model/config.dart';
+import 'package:app_kms/view/model/members.dart';
 import 'package:app_kms/view/model/projectDetails.dart';
 import 'package:app_kms/view/model/user.dart';
 import 'package:app_kms/view/project_page/project_page_details.dart';
@@ -72,7 +74,9 @@ class _MemberListPageState extends State<MemberListPage> {
                     ? ListView.builder(
                         itemCount: _foundUsers.length,
                         itemBuilder: (context, index) => GestureDetector(
-                          onTap: () => {_getUserInfo(index)},
+                          onTap: () => {
+                            _getUserInfo(_foundUsers[index]["id"].toString())
+                          },
                           child: Card(
                             key: ValueKey(_foundUsers[index]["employee_code"]),
                             // color: Colors.amberAccent,
@@ -198,7 +202,26 @@ class _MemberListPageState extends State<MemberListPage> {
     });
   }
 
-  void _getUserInfo(int index) {
-    
+  void _getUserInfo(String index) {
+    http.post(Uri.parse(MyConfig.server + "/find_members_list.php"),
+        body: {"userId": index.toString()}).then((response) {
+      var jsondata = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Members members = Members.fromJson(jsondata['project_data'][0]);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    MemberDetailsPage(user: widget.user, members: members)));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Login Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
+    });
   }
 }
