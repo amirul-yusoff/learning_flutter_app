@@ -268,9 +268,6 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
   }
 
   _find() {
-    print("find");
-    print(MyConfig.server +
-        "/project_code_by_project_code_and_project_title.php");
     http.post(
         Uri.parse(MyConfig.server +
             "/project_code_by_project_code_and_project_title.php"),
