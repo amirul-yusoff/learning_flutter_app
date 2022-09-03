@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_kms/view/daily_record_page/daily_record_details_page.dart';
 import 'package:app_kms/view/model/config.dart';
 import 'package:app_kms/view/model/dailyRecordList.dart';
 import 'package:app_kms/view/model/projectDetails.dart';
@@ -133,7 +134,10 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
                   ? ListView.builder(
                       itemCount: _foundUsers.length,
                       itemBuilder: (context, index) => GestureDetector(
-                        onTap: () => {_getProjectInfo(index)},
+                        onTap: () => {
+                          _getProjectInfo(
+                              _foundUsers[index]["daily_record_id"].toString())
+                        },
                         child: Card(
                           key: ValueKey(_foundUsers[index]["project_code"]),
                           // color: Colors.amberAccent,
@@ -176,82 +180,38 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
     );
   }
 
-  void _getProjectInfo(int index) {
-    print(MyConfig.server + "/project_code_find_id.php");
-    var ProjectID = _foundUsers[index]['Project_ID'];
-    var ProjectCode = _foundUsers[index]['Project_Code'];
-    ProjectDetails projectdetails = ProjectDetails(
-      _foundUsers[index]['Project_ID'].toString(),
-      _foundUsers[index]['Project_Code'].toString(),
-      _foundUsers[index]['Project_Short_name'].toString(),
-      _foundUsers[index]['project_type'].toString(),
-      _foundUsers[index]['project_team'].toString(),
-      _foundUsers[index]['Project_Status'].toString(),
-      _foundUsers[index]['Project_Client'].toString(),
-      _foundUsers[index]['MainCon1'].toString(),
-      _foundUsers[index]['Maincon2'].toString(),
-      _foundUsers[index]['Project_Title'].toString(),
-      _foundUsers[index]['Project_Contract_No'].toString(),
-      _foundUsers[index]['project_tender_no'].toString(),
-      _foundUsers[index]['tender_id'].toString(),
-      _foundUsers[index]['project_contract_period'].toString(),
-      _foundUsers[index]['Project_PO_No'].toString(),
-      _foundUsers[index]['contract_original_value'].toString(),
-      _foundUsers[index]['contract_vo_value'].toString(),
-      _foundUsers[index]['Tarikh_Pesanan'].toString(),
-      _foundUsers[index]['Project_Commencement_Date'].toString(),
-      _foundUsers[index]['Project_Completion_Date'].toString(),
-      _foundUsers[index]['contract_eot'].toString(),
-      _foundUsers[index]['Project_Close_Date'].toString(),
-      _foundUsers[index]['Project_Liquidity_And_Damages'].toString(),
-      _foundUsers[index]['Project_Defect_Liability_Period'].toString(),
-      _foundUsers[index]['project_client_gm'].toString(),
-      _foundUsers[index]['project_client_kj'].toString(),
-      _foundUsers[index]['Project_Client_Manager'].toString(),
-      _foundUsers[index]['Project_Client_Engineer'].toString(),
-      _foundUsers[index]['Project_Client_Supervisor'].toString(),
-      _foundUsers[index]['project_client_foman'].toString(),
-      _foundUsers[index]['Project_Prepared_by'].toString(),
-      _foundUsers[index]['Project_Date_Prepared'].toString(),
-      _foundUsers[index]['Project_Important_Note'].toString(),
-      _foundUsers[index]['Retention'].toString(),
-      _foundUsers[index]['EntryDate'].toString(),
-      _foundUsers[index]['zone_code'].toString(),
-      _foundUsers[index]['location'].toString(),
-      _foundUsers[index]['latitude'].toString(),
-      _foundUsers[index]['longitude'].toString(),
-      _foundUsers[index]['isdelete'].toString(),
-      _foundUsers[index]['Project_Coordinator'].toString(),
-      _foundUsers[index]['Project_Supervisor'].toString(),
-      _foundUsers[index]['created_at'].toString(),
-      _foundUsers[index]['updated_at'].toString(),
-      _foundUsers[index]['project_gross_profit'].toString(),
-      _foundUsers[index]['consultant'].toString(),
-      _foundUsers[index]['awarded_party'].toString(),
-      _foundUsers[index]['po_value'].toString(),
-      _foundUsers[index]['vendor_bulk_private'].toString(),
-      _foundUsers[index]['po_no'].toString(),
-      _foundUsers[index]['insurance_project_code'].toString(),
-      _foundUsers[index]['insurance_lost_amount'].toString(),
-      _foundUsers[index]['license_company'].toString(),
-      _foundUsers[index]['is_office'].toString(),
-      _foundUsers[index]['client_pic'].toString(),
-      _foundUsers[index]['license_fee_amount'].toString(),
-      _foundUsers[index]['license_fee_percentage'].toString(),
-    );
+  void _getProjectInfo(String dailyRecordID) {
+    print(dailyRecordID);
 
-    http.post(Uri.parse(MyConfig.server + "/project_code_find_id.php"), body: {
-      "projectid": ProjectID.toString(),
-    }).then((response) {
+    http.post(Uri.parse(MyConfig.server + "/daily_record_details.php"),
+        body: {"dailyRecordID": dailyRecordID}).then((response) {
+      print(response.statusCode);
+
       var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        var streetsFromJson = jsondata['project_data'][0];
+        DailyRecordList dailyRecordList =
+            DailyRecordList.fromJson(streetsFromJson);
+        Fluttertoast.showToast(
+            msg: "Fetching....",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => DailyRecordDetails(
+                    user: widget.user, dailyRecordList: dailyRecordList)));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
     });
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (BuildContext context) => ProjectDetailsPage(
-    //               user: widget.user,
-    //               projectdetails: projectdetails,
-    //             )));
   }
 
   _refresh() {

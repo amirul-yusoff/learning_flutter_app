@@ -204,7 +204,7 @@ class _DailyRecordByProjectPageState extends State<DailyRecordByProjectPage> {
         DailyRecordList dailyRecordList =
             DailyRecordList.fromJson(streetsFromJson);
         Fluttertoast.showToast(
-            msg: "Found",
+            msg: "Fetching....",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

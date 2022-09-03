@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:app_kms/custom_button/custom_button_find_data.dart';
+import 'package:app_kms/view/daily_record_page/daily_record_details_page.dart';
 import 'package:app_kms/view/model/config.dart';
+import 'package:app_kms/view/model/dailyRecordList.dart';
 import 'package:app_kms/view/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -108,7 +110,11 @@ class _DailyRecordByDateState extends State<DailyRecordByDate> {
                     ? ListView.builder(
                         itemCount: _foundUsers.length,
                         itemBuilder: (context, index) => GestureDetector(
-                          onTap: () => {_getProjectInfo(index)},
+                          onTap: () => {
+                            _getProjectInfo(_foundUsers[index]
+                                    ["daily_record_id"]
+                                .toString())
+                          },
                           child: Card(
                             key: ValueKey(_foundUsers[index]["project_code"]),
                             // color: Colors.amberAccent,
@@ -224,5 +230,37 @@ class _DailyRecordByDateState extends State<DailyRecordByDate> {
     });
   }
 
-  void _getProjectInfo(int index) {}
+  void _getProjectInfo(String dailyRecordID) {
+    print(dailyRecordID);
+
+    http.post(Uri.parse(MyConfig.server + "/daily_record_details.php"),
+        body: {"dailyRecordID": dailyRecordID}).then((response) {
+      print(response.statusCode);
+
+      var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        var streetsFromJson = jsondata['project_data'][0];
+        DailyRecordList dailyRecordList =
+            DailyRecordList.fromJson(streetsFromJson);
+        Fluttertoast.showToast(
+            msg: "Fetching....",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => DailyRecordDetails(
+                    user: widget.user, dailyRecordList: dailyRecordList)));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
+    });
+  }
 }

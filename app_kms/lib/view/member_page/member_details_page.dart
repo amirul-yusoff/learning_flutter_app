@@ -181,7 +181,7 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
       var jsondata = jsonDecode(response.body);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(
-            msg: "Found",
+            msg: "Checking Asset ...",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -189,11 +189,7 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
         setState(() {
           var streetsFromJson = jsondata['project_data'];
           _foundUsers = List<Map<String, dynamic>>.from((streetsFromJson));
-          if (_foundUsers.length == 0) {
-            print("empty");
-          }
-          print("_foundUsers");
-          print(_foundUsers);
+          if (_foundUsers.length == 0) {}
         });
       } else {
         Fluttertoast.showToast(
