@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_kms/custom_button/custom_button_find_data.dart';
 import 'package:app_kms/view/model/config.dart';
 import 'package:app_kms/view/model/projectDetails.dart';
 import 'package:app_kms/view/model/user.dart';
@@ -18,6 +19,8 @@ class ProjectRegistryPage extends StatefulWidget {
 }
 
 class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
+  late double screenHeight, screenWidth, resWidth;
+  final TextEditingController _findController = TextEditingController();
   List<Map<String, dynamic>> _allProject = [];
   List<Map<String, dynamic>> _foundUsers = [];
 
@@ -46,6 +49,7 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
     super.initState();
     Future.delayed(Duration.zero, () {
       getAllCategory();
+      _findController.text = '';
     });
   }
 
@@ -64,14 +68,14 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
       });
     }
     Fluttertoast.showToast(
-        msg: "Finding Project",
+        msg: "Finding Project " + enteredKeyword,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         fontSize: 14.0);
     List<Map<String, dynamic>> results = [];
 
-    if (enteredKeyword.isEmpty || enteredKeyword.length <= 3) {
+    if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
       results = _allProject;
     } else {
@@ -97,6 +101,13 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
 
   @override
   Widget build(BuildContext context) {
+    screenWidth = MediaQuery.of(context).size.width;
+
+    if (screenWidth <= 600) {
+      resWidth = screenWidth;
+    } else {
+      resWidth = screenWidth * 0.75;
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Project'),
@@ -108,12 +119,24 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
             const SizedBox(
               height: 20,
             ),
+            // TextField(
+            //   onChanged: (value) => _runFilter(value),
+            //   decoration: const InputDecoration(
+            //       labelText:
+            //           'Search Project (Please insert more than 3 caharacter)',
+            //       suffixIcon: Icon(Icons.search)),
+            // ),
             TextField(
-              onChanged: (value) => _runFilter(value),
+              controller: _findController,
+              obscureText: false,
               decoration: const InputDecoration(
-                  labelText:
-                      'Search Project (Please insert more than 3 caharacter)',
-                  suffixIcon: Icon(Icons.search)),
+                border: OutlineInputBorder(),
+                labelText: 'Find By Project Code or Project Short Name',
+              ),
+            ),
+            const SizedBox(height: 5),
+            CustomFindDataButton(
+              onPressed: _find,
             ),
             Text("Result Found : " + _foundUsers.length.toString()),
             const SizedBox(
@@ -242,5 +265,39 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
                   user: widget.user,
                   projectdetails: projectdetails,
                 )));
+  }
+
+  _find() {
+    print("find");
+    print(MyConfig.server +
+        "/project_code_by_project_code_and_project_title.php");
+    http.post(
+        Uri.parse(MyConfig.server +
+            "/project_code_by_project_code_and_project_title.php"),
+        body: {
+          "find": _findController.text.toString(),
+        }).then((response) {
+      var jsondata = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "Fetching Data",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        setState(() {
+          var streetsFromJson = jsondata['project_data'];
+          _foundUsers = List<Map<String, dynamic>>.from((streetsFromJson));
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
+    });
   }
 }
