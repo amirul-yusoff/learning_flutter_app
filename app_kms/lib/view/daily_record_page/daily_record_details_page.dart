@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class DailyRecordDetails extends StatefulWidget {
   final User user;
@@ -127,19 +128,20 @@ class _DailyRecordDetailsState extends State<DailyRecordDetails> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              Container(
-                                child: CircularPercentIndicator(
-                                  radius: 60.0,
-                                  lineWidth: 5.0,
-                                  percent: _foundWorkorders[i - 1]
-                                          ["percentages"] ??
-                                      0.0,
-                                  center: Text(_foundWorkorders[i - 1]
-                                              ["in_percentages"]
-                                          .toString() +
-                                      '%'),
-                                  progressColor: Colors.green,
-                                ),
+                              CircularPercentIndicator(
+                                animation: true,
+                                animationDuration: 3400,
+                                radius: 60.0,
+                                lineWidth: 10.0,
+                                percent: _foundWorkorders[i - 1]
+                                        ["percentages"] ??
+                                    0.0,
+                                center: Text(_foundWorkorders[i - 1]
+                                            ["in_percentages"]
+                                        .toString() +
+                                    '%'),
+                                progressColor: Colors.green,
+                                // circularStrokeCap: CircularStrokeCap.round,
                               ),
                               Container(
                                 padding: const EdgeInsets.all(20),
@@ -219,16 +221,22 @@ class _DailyRecordDetailsState extends State<DailyRecordDetails> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       child: SingleChildScrollView(
-                        child: InteractiveViewer(
-                          child: Image.network(_foundImages[i - 1]["path"]),
-                          transformationController: controller,
-                          boundaryMargin: EdgeInsets.all(5.0),
-                          onInteractionEnd: (ScaleEndDetails endDetails) {
-                            controller.value = Matrix4.identity();
-                            setState(() {
-                              velocity = endDetails.velocity.toString();
-                            });
-                          },
+                        child: Center(
+                          child: InteractiveViewer(
+                            child: FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image: _foundImages[i - 1]["path"],
+                            ),
+                            // Image.network(_foundImages[i - 1]["path"]),
+                            transformationController: controller,
+                            boundaryMargin: const EdgeInsets.all(5.0),
+                            onInteractionEnd: (ScaleEndDetails endDetails) {
+                              controller.value = Matrix4.identity();
+                              setState(() {
+                                velocity = endDetails.velocity.toString();
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ),
