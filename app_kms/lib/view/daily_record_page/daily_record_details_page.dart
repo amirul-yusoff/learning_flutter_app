@@ -151,6 +151,30 @@ class _DailyRecordDetailsState extends State<DailyRecordDetails> {
                               Text(_foundWorkorders[i - 1]["work_done_today"]
                                   .toString()),
                             ]),
+                            TableRow(children: [
+                              const Text('Total Work Done',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                              Text(_foundWorkorders[i - 1]["sum_workdone"]
+                                  .toString()),
+                            ]),
+                            TableRow(children: [
+                              const Text('Total Qty',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                              Text(_foundWorkorders[i - 1]["total_qty"]
+                                  .toString()),
+                            ]),
+                            TableRow(children: [
+                              const Text('Graph',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                              Text(_foundWorkorders[i - 1]["total_qty"]
+                                  .toString()),
+                            ]),
                           ],
                         ),
                       ),
@@ -201,6 +225,8 @@ class _DailyRecordDetailsState extends State<DailyRecordDetails> {
         setState(() {
           var streetsFromJson = jsondata['project_data'];
           _foundWorkorders = List<Map<String, dynamic>>.from((streetsFromJson));
+          _findWorkOrderCategoriesSumWorkDones();
+          _findWorkOrderCategoriesQty();
         });
       } else {
         Fluttertoast.showToast(
@@ -239,5 +265,73 @@ class _DailyRecordDetailsState extends State<DailyRecordDetails> {
             fontSize: 14.0);
       }
     });
+  }
+
+  _findWorkOrderCategoriesSumWorkDones() {
+    for (var i = 0; i < _foundWorkorders.length; i++) {
+      http.post(Uri.parse(MyConfig.server + "/find_daily_record_work_done.php"),
+          body: {
+            "workorder_number":
+                _foundWorkorders[i]['workorder_number'].toString(),
+            "wo_category_short_name":
+                _foundWorkorders[i]['wo_category_short_name'].toString(),
+          }).then((response) {
+        var jsondata = jsonDecode(response.body);
+        if (response.statusCode == 200) {
+          Fluttertoast.showToast(
+              msg: "Found Work Done Today",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+          setState(() {
+            _foundWorkorders[i]['sum_workdone'] =
+                jsondata['project_data'][0]['sum'].toString();
+          });
+        } else {
+          Fluttertoast.showToast(
+              msg: "Failed",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+        }
+      });
+    }
+  }
+
+  _findWorkOrderCategoriesQty() {
+    for (var i = 0; i < _foundWorkorders.length; i++) {
+      http.post(
+          Uri.parse(
+              MyConfig.server + "/find_daily_record_work_categories_qty.php"),
+          body: {
+            "workorder_number":
+                _foundWorkorders[i]['workorder_number'].toString(),
+            "wo_category_short_name":
+                _foundWorkorders[i]['wo_category_short_name'].toString(),
+          }).then((response) {
+        var jsondata = jsonDecode(response.body);
+        if (response.statusCode == 200) {
+          Fluttertoast.showToast(
+              msg: "Found Total Qty",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+          setState(() {
+            _foundWorkorders[i]['total_qty'] =
+                jsondata['project_data'][0]['sum'].toString();
+          });
+        } else {
+          Fluttertoast.showToast(
+              msg: "Failed",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+        }
+      });
+    }
   }
 }
