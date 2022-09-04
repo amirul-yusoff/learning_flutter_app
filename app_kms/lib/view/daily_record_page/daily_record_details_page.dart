@@ -164,6 +164,15 @@ class _DailyRecordDetailsState extends State<DailyRecordDetails> {
                                             .toString()),
                                       ]),
                                       TableRow(children: [
+                                        const Text('Progress ID',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(_foundWorkorders[i - 1]
+                                                ["daily_record_progress_id"]
+                                            .toString()),
+                                      ]),
+                                      TableRow(children: [
                                         const Text('Workorder  Category',
                                             style: TextStyle(
                                                 fontSize: 16,
