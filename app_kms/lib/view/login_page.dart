@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                                   labelStyle: TextStyle(),
                                   labelText: 'Username',
                                   icon: Icon(
-                                    Icons.phone,
+                                    Icons.person,
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(width: 2.0),

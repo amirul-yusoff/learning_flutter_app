@@ -190,7 +190,6 @@ class _ProjectRegistryPageState extends State<ProjectRegistryPage> {
   }
 
   void _getProjectInfo(int index) {
-    print(MyConfig.server + "/project_code_find_id.php");
     var ProjectID = _foundUsers[index]['Project_ID'];
     var ProjectCode = _foundUsers[index]['Project_Code'];
     ProjectDetails projectdetails = ProjectDetails(

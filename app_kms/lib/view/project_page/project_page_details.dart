@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:app_kms/view/model/config.dart';
 import 'package:app_kms/view/model/projectDetails.dart';
 import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/view/model/workorder.dart';
+import 'package:app_kms/view/project_page/workorder_details_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 class ProjectDetailsPage extends StatefulWidget {
@@ -19,6 +22,12 @@ class ProjectDetailsPage extends StatefulWidget {
 
 class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   late double screenHeight, screenWidth, resWidth;
+  List<Map<String, dynamic>> _foundWorkorders = [];
+  @override
+  void initState() {
+    super.initState();
+    _findWorkorder();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +37,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       resWidth = screenWidth;
     } else {
       resWidth = screenWidth * 0.75;
-    }
-
-    @override
-    void initState() {
-      super.initState();
-      Future.delayed(Duration.zero, () {
-        print("init");
-        _findProject();
-      });
     }
 
     return Scaffold(
@@ -117,6 +117,41 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               leading: const Text("Project Team : "),
               title: Text(widget.projectdetails.project_team),
             )),
+            Card(
+                child: ListTile(
+              leading: const Text("Project Team : "),
+              title: Text(widget.projectdetails.project_team),
+            )),
+            for (var i = 1; i <= _foundWorkorders.length; i++)
+              Center(
+                child: Card(
+                  child: ListTile(
+                    leading: Text('Workorder $i'),
+                    title: Text(
+                        _foundWorkorders[i - 1]["WorkOrderNumber"].toString()),
+                    subtitle: Text(_foundWorkorders[i - 1]["Status"] +
+                        '\n' +
+                        _foundWorkorders[i - 1]["DescriptionofWork"]
+                            .toString()),
+                    trailing: Column(children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _getWorkorderInfo(
+                                _foundWorkorders[i - 1]["WorkOrderNumber"]);
+                            // _passwordVisible = !_passwordVisible;
+                          });
+                        },
+                        child: const Text(
+                          'Check\nDR\nQty',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ]),
+                    isThreeLine: true,
+                  ),
+                ),
+              ),
             const SizedBox(
               height: 80,
             ),
@@ -130,15 +165,66 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     );
   }
 
-  void _findProject() {
-    print("_findProject");
-
-    http.post(Uri.parse(MyConfig.server + "/project_code_find_id.php"),
-        body: {"projectid": widget.projectdetails.Project_ID}).then((response) {
-      print("response.statusCode");
-      print(response.statusCode);
-
+  _findWorkorder() {
+    http.post(
+        Uri.parse(MyConfig.server + "/project_code_find_workorder_by_code.php"),
+        body: {
+          "prjectcode": widget.projectdetails.Project_Code
+        }).then((response) {
       var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "Fetching Workorder Record",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        setState(() {
+          var streetsFromJson = jsondata['project_data'];
+          _foundWorkorders = List<Map<String, dynamic>>.from((streetsFromJson));
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
+    });
+  }
+
+  _getWorkorderInfo(String workorder) {
+    http.post(
+        Uri.parse(
+            MyConfig.server + "/project_code_find_workorder_by_wokorder.php"),
+        body: {"workorder": workorder}).then((response) {
+      var jsondata = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Workorders workorders =
+            Workorders.fromJson(jsondata['project_data'][0]);
+        Fluttertoast.showToast(
+            msg: "Fetching Data ...",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => WorkorderDetailsPage(
+                      user: widget.user,
+                      workorders: workorders,
+                    )));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
     });
   }
 }
