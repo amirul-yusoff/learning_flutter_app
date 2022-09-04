@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:app_kms/view/daily_record_page/daily_record_details_page.dart';
 import 'package:app_kms/view/model/config.dart';
 import 'package:app_kms/view/model/dailyRecordList.dart';
+import 'package:app_kms/view/model/projectDetails.dart';
 import 'package:app_kms/view/model/user.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:ndialog/ndialog.dart';
 
 class DailyRecordPage extends StatefulWidget {
   final User user;
@@ -15,158 +19,205 @@ class DailyRecordPage extends StatefulWidget {
 }
 
 class _DailyRecordPageState extends State<DailyRecordPage> {
-  List assetlist = [];
-  List dailyRecordlist = [];
-  String titlecenter = "Loading Daily Record List...";
-  late double screenHeight, screenWidth, resWidth;
-  final df = '';
-  late ScrollController _scrollController;
-  int scrollcount = 10;
-  int rowcount = 2;
-  int numprd = 0;
+  List<Map<String, dynamic>> _allProject = [];
+  List<Map<String, dynamic>> _foundUsers = [];
+  var findKey = '';
+
+  Future getAllCategory() async {
+    ProgressDialog progressDialog = ProgressDialog(context,
+        message: const Text("Please wait.."),
+        title: const Text("Fetching Data"));
+    progressDialog.show();
+    var baseUrl = MyConfig.server + "/daily_record_list.php";
+
+    http.Response response = await http.get(Uri.parse(baseUrl));
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+
+      setState(() {
+        var streetsFromJson = jsonData['project_data'];
+        _foundUsers = List<Map<String, dynamic>>.from((streetsFromJson));
+      });
+    }
+    progressDialog.dismiss();
+  }
 
   @override
-  void initState() {
+  initState() {
     super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
-    _loadProducts();
+    Future.delayed(Duration.zero, () {
+      getAllCategory();
+    });
+  }
+
+  // This function is called whenever the text field changes
+  Future<void> _runFilter(String enteredKeyword) async {
+    var baseUrl = MyConfig.server + "/daily_record_list.php";
+
+    http.Response response = await http.get(Uri.parse(baseUrl));
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+
+      setState(() {
+        var streetsFromJson = jsonData['project_data'];
+        _allProject = List<Map<String, dynamic>>.from((streetsFromJson));
+      });
+    }
+    Fluttertoast.showToast(
+        msg: "Finding Project",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 14.0);
+    List<Map<String, dynamic>> results = [];
+
+    if (enteredKeyword.isEmpty) {
+      // if the search field is empty or only contains white-space, we'll display all users
+      results = _allProject;
+    } else {
+      print("Find the Project");
+      results = _allProject
+          .where((user) => user["project_code"]
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
+      Fluttertoast.showToast(
+          msg: "DR Found",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 14.0);
+      // we use the toLowerCase() method to make it case-insensitive
+    }
+    findKey = enteredKeyword;
+    // Refresh the UI
+    setState(() {
+      _foundUsers = results;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth <= 600) {
-      resWidth = screenWidth;
-      rowcount = 2;
-    } else {
-      resWidth = screenWidth * 0.75;
-      rowcount = 3;
-    }
-
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Daily Record'),
-        ),
-        body: assetlist.isEmpty
-            ? Center(
-                child: Text(titlecenter,
-                    style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold)))
-            : Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    child: Text("Your Current Asset",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                  ),
-                  Text(numprd.toString() + " found"),
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: rowcount,
-                      controller: _scrollController,
-                      children: List.generate(scrollcount, (index) {
-                        return Card(
-                            child: InkWell(
-                          onTap: () => {_prodDetails(index)},
-                          child: Column(
-                            children: [
-                              Flexible(
-                                  flex: 4,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                            truncateString(assetlist[index]
-                                                    ['daily_record_id']
-                                                .toString()),
-                                            style: TextStyle(
-                                                fontSize: resWidth * 0.045,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(
-                                            truncateString(assetlist[index]
-                                                    ['project_code']
-                                                .toString()),
-                                            style: TextStyle(
-                                                fontSize: resWidth * 0.045,
-                                                fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
-                                  )),
-                            ],
+      appBar: AppBar(
+        title: const Text('All Daily Record'),
+        actions: [
+          IconButton(
+              onPressed: _refresh, icon: const Icon(Icons.refresh_rounded)),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            TextField(
+              onChanged: (value) => setState(() {
+                findKey = value;
+                _runFilter(value);
+              }),
+              decoration: const InputDecoration(
+                  labelText:
+                      'Search Project (Please insert more than 3 caharacter)',
+                  suffixIcon: Icon(Icons.search)),
+            ),
+            Text("Result Found : " + _foundUsers.length.toString()),
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: _foundUsers.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: _foundUsers.length,
+                      itemBuilder: (context, index) => GestureDetector(
+                        onTap: () => {
+                          _getProjectInfo(
+                              _foundUsers[index]["daily_record_id"].toString())
+                        },
+                        child: Card(
+                          key: ValueKey(_foundUsers[index]["project_code"]),
+                          // color: Colors.amberAccent,
+                          elevation: 4,
+                          shape: const RoundedRectangleBorder(
+                            side: BorderSide(),
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                        ));
-                      }),
+                          // margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: SizedBox(
+                            // width: 300,
+                            // height: 100,
+                            child: ListTile(
+                              leading: Text(
+                                _foundUsers[index]["project_code"].toString(),
+                                style: const TextStyle(fontSize: 24),
+                              ),
+                              title: Text("Serial No : " +
+                                  _foundUsers[index]['serial_no'].toString() +
+                                  "\n(" +
+                                  _foundUsers[index]['record_date'].toString() +
+                                  ")\n"),
+                              subtitle: Text(_foundUsers[index]["site_activity"]
+                                  .toString()),
+                              trailing: Text(
+                                  _foundUsers[index]['record_by'].toString()),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : const Text(
+                      'No results found',
+                      style: TextStyle(fontSize: 24),
                     ),
-                  ),
-                ],
-              ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  String truncateString(String str) {
-    if (str.length > 15) {
-      str = str.substring(0, 15);
-      return str + "...";
-    } else {
-      return str;
-    }
-  }
+  void _getProjectInfo(String dailyRecordID) {
+    print(dailyRecordID);
 
-  void _loadProducts() {
-    if (widget.user.username == "na") {
-      setState(() {
-        titlecenter = "Unregistered User";
-      });
-      return;
-    }
-    http.post(Uri.parse(MyConfig.server + "/daily_record_list.php"),
-        body: {'username': widget.user.username.toString()}).then((response) {
-      var jsonData = response.body;
-      var parsedJson = json.decode(jsonData);
+    http.post(Uri.parse(MyConfig.server + "/daily_record_details.php"),
+        body: {"dailyRecordID": dailyRecordID}).then((response) {
+      print(response.statusCode);
+
+      var jsondata = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        var extractdata = parsedJson['data'];
-        setState(() {
-          assetlist = extractdata;
-          numprd = assetlist.length;
-          if (scrollcount >= assetlist.length) {
-            scrollcount = assetlist.length;
-          }
-        });
+        var streetsFromJson = jsondata['project_data'][0];
+        DailyRecordList dailyRecordList =
+            DailyRecordList.fromJson(streetsFromJson);
+        Fluttertoast.showToast(
+            msg: "Fetching....",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => DailyRecordDetails(
+                    user: widget.user, dailyRecordList: dailyRecordList)));
       } else {
-        setState(() {
-          titlecenter = "No Data";
-        });
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
       }
     });
   }
 
-  _scrollListener() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      setState(() {
-        if (assetlist.length > scrollcount) {
-          scrollcount = scrollcount + 10;
-          if (scrollcount >= assetlist.length) {
-            scrollcount = assetlist.length;
-          }
-        }
-      });
-    }
-  }
-
-  _prodDetails(int index) async {
-    print("prodDetails");
-    DailyRecordList dailyRecordList = DailyRecordList(
-      daily_record_id: assetlist[index]['daily_record_id'],
-      serial_no: assetlist[index]['serial_no'],
-      project_code: assetlist[index]['project_code'],
-      site_activity: assetlist[index]['site_activity'],
-    );
-
-    _loadProducts();
+  _refresh() {
+    print("findKey");
+    print(findKey);
+    _runFilter(findKey);
+    // getAllCategory();
   }
 }

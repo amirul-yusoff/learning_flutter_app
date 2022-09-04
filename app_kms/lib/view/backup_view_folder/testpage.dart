@@ -1,31 +1,24 @@
 import 'dart:convert';
 
-import 'package:app_kms/view/daily_record_page/daily_record_details_page.dart';
-import 'package:app_kms/view/model/config.dart';
-import 'package:app_kms/view/model/dailyRecordList.dart';
-import 'package:app_kms/view/model/projectDetails.dart';
 import 'package:app_kms/view/model/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'package:ndialog/ndialog.dart';
 
-class DailyRecordPage extends StatefulWidget {
+class TestPaginationPage extends StatefulWidget {
   final User user;
-  const DailyRecordPage({Key? key, required this.user}) : super(key: key);
+  const TestPaginationPage({Key? key, required this.user}) : super(key: key);
 
   @override
-  State<DailyRecordPage> createState() => _DailyRecordPageState();
+  State<TestPaginationPage> createState() => _TestPaginationPageState();
 }
 
-class _DailyRecordPageState extends State<DailyRecordPage> {
+class _TestPaginationPageState extends State<TestPaginationPage> {
   // We will fetch data from this Rest api
-  // final _baseUrl = 'https://jsonplaceholder.typicode.com/posts';
-  final _baseUrl = MyConfig.server + "/daily_record_list_with_pagination.php";
+  final _baseUrl = 'https://jsonplaceholder.typicode.com/posts';
 
   // At the beginning, we fetch the first 20 posts
-  int _page = 1;
+  int _page = 0;
   // you can change this value to fetch more or less posts per page (10, 15, 5, etc)
   final int _limit = 20;
 
@@ -50,9 +43,7 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
       final res =
           await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
       setState(() {
-        var jsonData = json.decode(res.body);
-        var streetsFromJson = jsonData['project_data'];
-        _posts = streetsFromJson;
+        _posts = json.decode(res.body);
       });
     } catch (err) {
       if (kDebugMode) {
@@ -79,9 +70,8 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
       try {
         final res =
             await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
-        var jsonData = json.decode(res.body);
-        var streetsFromJson = jsonData['project_data'];
-        final List fetchedPosts = streetsFromJson;
+
+        final List fetchedPosts = json.decode(res.body);
         if (fetchedPosts.isNotEmpty) {
           setState(() {
             _posts.addAll(fetchedPosts);
@@ -125,11 +115,11 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daily Record List'),
+        title: const Text('Kindacode.com'),
       ),
       body: _isFirstLoadRunning
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: const CircularProgressIndicator(),
             )
           : Column(
               children: [
@@ -137,35 +127,12 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
                   child: ListView.builder(
                     controller: _controller,
                     itemCount: _posts.length,
-                    itemBuilder: (_, index) => GestureDetector(
-                      onTap: () => {
-                        _getProjectInfo(
-                            _posts[index]["daily_record_id"].toString())
-                      },
-                      child: Card(
-                        elevation: 4,
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide(),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 10),
-                        child: ListTile(
-                          leading: Text(
-                            (index + 1).toString() +
-                                ")" +
-                                _posts[index]['project_code'].toString(),
-                            style: const TextStyle(fontSize: 24),
-                          ),
-                          title: Text("Serial No : " +
-                              _posts[index]['serial_no'].toString() +
-                              "\n(" +
-                              _posts[index]['record_date'].toString() +
-                              ")\n"),
-                          subtitle:
-                              Text(_posts[index]["site_activity"].toString()),
-                          trailing: Text(_posts[index]['record_by'].toString()),
-                        ),
+                    itemBuilder: (_, index) => Card(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 10),
+                      child: ListTile(
+                        title: Text(_posts[index]['title']),
+                        subtitle: Text(_posts[index]['body']),
                       ),
                     ),
                   ),
@@ -192,39 +159,5 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
               ],
             ),
     );
-  }
-
-  void _getProjectInfo(String dailyRecordID) {
-    print(dailyRecordID);
-
-    http.post(Uri.parse(MyConfig.server + "/daily_record_details.php"),
-        body: {"dailyRecordID": dailyRecordID}).then((response) {
-      print(response.statusCode);
-
-      var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        var streetsFromJson = jsondata['project_data'][0];
-        DailyRecordList dailyRecordList =
-            DailyRecordList.fromJson(streetsFromJson);
-        Fluttertoast.showToast(
-            msg: "Fetching....",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => DailyRecordDetails(
-                    user: widget.user, dailyRecordList: dailyRecordList)));
-      } else {
-        Fluttertoast.showToast(
-            msg: "Failed",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-      }
-    });
   }
 }
