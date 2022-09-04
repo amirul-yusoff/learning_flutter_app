@@ -3,7 +3,6 @@ import 'package:app_kms/view/daily_record_page/daily_record_page_main.dart';
 import 'package:app_kms/view/member_page/member_list_page.dart';
 import 'package:app_kms/view/profile_page/profile_page.dart';
 import 'package:app_kms/view/project_page/project_page_main.dart';
-import 'package:app_kms/view/testpage.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 
