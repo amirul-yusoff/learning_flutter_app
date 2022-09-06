@@ -213,13 +213,12 @@ class _LoginPageState extends State<LoginPage> {
 
     String _username = _usernameditingController.text;
     String _pass = _passEditingController.text;
-    http.post(Uri.parse(MyConfig.server + "/login_user.php"),
+    http.post(Uri.parse(MyConfig.server + "/login_user_pdo.php"),
         body: {"username": _username, "password": _pass}).then((response) {
-      print(response.statusCode);
-
       var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        User user = User.fromJson(jsondata['data']);
+
+      if (jsondata['responseCode'] == 200) {
+        User user = User.fromJson(jsondata['projectRows'][0]);
         Fluttertoast.showToast(
             msg: "Login Success",
             toastLength: Toast.LENGTH_SHORT,
