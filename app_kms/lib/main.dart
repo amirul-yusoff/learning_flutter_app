@@ -17,13 +17,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        // Define the default brightness and colors.
         brightness: Brightness.light,
+        // brightness: Brightness.dark,
+        primaryColor: Colors.lightBlue[800],
+
+        // Define the default font family.
+        fontFamily: 'Georgia',
+
+        // Define the default `TextTheme`. Use this to specify the default
+        // text styling for headlines, titles, bodies of text, and more.
         // fontFamily: 'Georgia',
-        // textTheme: const TextTheme(
-        //   headline6: TextStyle(fontSize: 20.0),
-        //   bodyText1: TextStyle(
-        //       fontSize: 12.0, fontFamily: 'Hind', color: Colors.red),
-        // )
+        textTheme: const TextTheme(
+          headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          headline2: TextStyle(fontSize: 72.0, fontStyle: FontStyle.italic),
+          headline6: TextStyle(
+              fontSize: 25.0, fontFamily: 'Hind', color: Colors.white),
+          bodyText1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        ),
       ),
       // darkTheme: ThemeData.dark(),
       title: 'App KMS',

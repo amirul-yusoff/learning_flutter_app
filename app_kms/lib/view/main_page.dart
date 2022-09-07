@@ -46,7 +46,10 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main Menu'),
+        title: Text(
+          'Main Menu',
+          style: Theme.of(context).textTheme.headline6,
+        ),
         automaticallyImplyLeading: false,
       ),
       body: Container(
