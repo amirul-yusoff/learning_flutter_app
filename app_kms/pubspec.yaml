@@ -42,6 +42,9 @@ dependencies:
   date_field: ^3.0.1
   percent_indicator: 4.0.1
   transparent_image: ^2.0.0
+  page_transition: ^2.0.9
+  toggle_switch: ^2.0.1
+  font_awesome_flutter: ^10.1.0
 
 dev_dependencies:
   flutter_test:
