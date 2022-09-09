@@ -38,6 +38,9 @@ dependencies:
   dropdown_search: ^3.0.1
   http: ^0.13.5
   ndialog: ^4.1.1+1
+  flutter_qiblah: ^2.0.2
+  flutter_svg: ^1.0.3
+  google_maps_flutter: ^2.1.12
 
 dev_dependencies:
   flutter_test:
