@@ -1,3 +1,5 @@
+import 'package:app_kms/model/config.dart';
+import 'package:app_kms/model/user.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -6,8 +8,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ndialog/ndialog.dart';
 
 import 'main_page.dart';
-import 'model/user.dart';
-import 'model/config.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

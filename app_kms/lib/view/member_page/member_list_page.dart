@@ -1,10 +1,9 @@
 import 'dart:convert';
 
+import 'package:app_kms/model/members.dart';
+import 'package:app_kms/model/user.dart';
 import 'package:app_kms/view/member_page/member_details_page.dart';
-import 'package:app_kms/view/model/config.dart';
-import 'package:app_kms/view/model/members.dart';
-import 'package:app_kms/view/model/projectDetails.dart';
-import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/model/config.dart';
 import 'package:app_kms/view/project_page/project_page_details.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

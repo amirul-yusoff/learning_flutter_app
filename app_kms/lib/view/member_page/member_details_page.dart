@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:app_kms/view/model/config.dart';
-import 'package:app_kms/view/model/members.dart';
-import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/model/members.dart';
+import 'package:app_kms/model/user.dart';
+import 'package:app_kms/model/config.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
