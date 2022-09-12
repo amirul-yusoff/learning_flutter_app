@@ -50,6 +50,25 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    late double screenHeight, screenWidth, resWidth, resHeight;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width / 2;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    int rowcount = 2;
+    if (screenWidth <= 600) {
+      resWidth = screenWidth;
+      rowcount = 2;
+    } else {
+      resWidth = screenWidth * 0.75;
+      rowcount = 3;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("AZAN"),
@@ -159,6 +178,58 @@ class _MainPageState extends State<MainPage> {
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.bold),
                     ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                        child: GridView.count(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(20),
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: rowcount,
+                      children: [
+                        Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(40),
+                            child: Material(
+                              color: Colors.blue[100],
+                              elevation: 8,
+                              child: InkWell(
+                                  highlightColor:
+                                      Colors.yellow.withOpacity(0.3),
+                                  splashColor: Colors.red.withOpacity(0.5),
+                                  onTap: () {
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //       builder: (context) =>
+                                    //           const qblahDirection()),
+                                    // );
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: const <Widget>[
+                                      SizedBox(height: 40),
+                                      Text(
+                                        "Qiblat",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Center(
+                                          child: Icon(
+                                        Icons.arrow_circle_up,
+                                        size: 80,
+                                      )),
+                                    ],
+                                  )),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ))
                   ],
                 ),
                 // color: Colors.grey[100],
