@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:app_kms/view/model/config.dart';
-import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/model/config.dart';
+import 'package:app_kms/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';

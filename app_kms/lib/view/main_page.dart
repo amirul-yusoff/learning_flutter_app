@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:app_kms/view/asset_page/asset_list_page.dart';
 import 'package:app_kms/view/daily_record_page/daily_record_page_main.dart';
 import 'package:app_kms/view/member_page/member_list_page.dart';
-import 'package:app_kms/view/model/config.dart';
+import 'package:app_kms/model/config.dart';
 import 'package:app_kms/view/profile_page/profile_page.dart';
 import 'package:app_kms/view/project_page/project_page_main.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ import 'package:ndialog/ndialog.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:http/http.dart' as http;
 import 'login_page.dart';
-import 'model/user.dart';
+import 'package:app_kms/model/user.dart';
 
 class MainPage extends StatefulWidget {
   final User user;

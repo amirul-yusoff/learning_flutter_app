@@ -1,4 +1,4 @@
-import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/model/user.dart';
 import 'package:app_kms/view/project_page/project_page_all_list.dart';
 import 'package:app_kms/view/project_page/project_page_by_employee_code.dart';
 import 'package:app_kms/view/project_page/project_page_by_project_team.dart';

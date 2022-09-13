@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/model/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;

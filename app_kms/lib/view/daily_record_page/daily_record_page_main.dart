@@ -1,7 +1,7 @@
 import 'package:app_kms/view/daily_record_page/daily_record_list_by_date.dart';
 import 'package:app_kms/view/daily_record_page/daily_record_list_by_project_page.dart';
 import 'package:app_kms/view/daily_record_page/daily_record_list_page.dart';
-import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/model/user.dart';
 import 'package:flutter/material.dart';
 
 class DailyRecordMainPage extends StatefulWidget {

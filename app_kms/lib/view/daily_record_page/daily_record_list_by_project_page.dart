@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:app_kms/view/daily_record_page/daily_record_details_page.dart';
-import 'package:app_kms/view/model/config.dart';
-import 'package:app_kms/view/model/dailyRecordList.dart';
-import 'package:app_kms/view/model/user.dart';
+import 'package:app_kms/model/config.dart';
+import 'package:app_kms/model/dailyRecordList.dart';
+import 'package:app_kms/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
