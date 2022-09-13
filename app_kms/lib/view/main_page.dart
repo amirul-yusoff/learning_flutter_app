@@ -6,6 +6,7 @@ import 'package:app_kms/view/member_page/member_list_page.dart';
 import 'package:app_kms/model/config.dart';
 import 'package:app_kms/view/profile_page/profile_page.dart';
 import 'package:app_kms/view/project_page/project_page_main.dart';
+import 'package:app_kms/view/test_path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ndialog/ndialog.dart';
@@ -324,6 +325,44 @@ class _MainPageState extends State<MainPage> {
                                     Center(
                                         child: Icon(
                                       Icons.power_settings_new_sharp,
+                                      size: 80,
+                                    )),
+                                  ],
+                                )),
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: Material(
+                            color: Colors.blue[100],
+                            elevation: 8,
+                            child: InkWell(
+                                highlightColor: Colors.yellow.withOpacity(0.3),
+                                splashColor: Colors.red.withOpacity(0.5),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            TestPathProviderPage(
+                                                user: widget.user)),
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: const <Widget>[
+                                    SizedBox(height: 40),
+                                    Text(
+                                      "Test Path Provider",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Center(
+                                        child: Icon(
+                                      Icons.construction_rounded,
                                       size: 80,
                                     )),
                                   ],
