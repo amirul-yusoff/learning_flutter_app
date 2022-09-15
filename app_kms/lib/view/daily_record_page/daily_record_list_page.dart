@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:app_kms/model/projectInfo.dart';
+import 'package:app_kms/view/daily_record_page/daily_record_create_page.dart';
 import 'package:app_kms/view/daily_record_page/daily_record_details_page.dart';
 import 'package:app_kms/model/config.dart';
 import 'package:app_kms/model/dailyRecordList.dart';
@@ -160,6 +162,18 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
               const SizedBox(
                 height: 10,
               ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: const BorderSide(color: Colors.white)))),
+                onPressed: _getProjectCode,
+                child: const Text('Create New Daily Record'),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               Expanded(
                 child: ListView.builder(
                   controller: _controller,
@@ -222,8 +236,6 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
   void _getProjectInfo(String dailyRecordID) {
     http.post(Uri.parse(MyConfig.server + "/daily_record_details.php"),
         body: {"dailyRecordID": dailyRecordID}).then((response) {
-      print(jsonDecode(response.body));
-
       var jsondata = jsonDecode(response.body);
       if (response.statusCode == 200) {
         var streetsFromJson = jsondata['project_data'][0];
@@ -240,6 +252,38 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
             MaterialPageRoute(
                 builder: (BuildContext context) => DailyRecordDetails(
                     user: widget.user, dailyRecordList: dailyRecordList)));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
+    });
+  }
+
+  _getProjectCode() {
+
+    http.post(
+        Uri.parse(MyConfig.server + "/daily_record_find_project_details.php"),
+        body: {"project_code": _project_code}).then((response) {
+      var jsondata = jsonDecode(response.body);
+      print(jsondata);
+      if (response.statusCode == 200) {
+        var streetsFromJson = jsondata['project_data'][0];
+        ProjectInfo projectInfo = ProjectInfo.fromJson(streetsFromJson);
+        Fluttertoast.showToast(
+            msg: "Fetching....",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => DailyRecordCreatePage(
+                    user: widget.user, projectInfo: projectInfo)));
       } else {
         Fluttertoast.showToast(
             msg: "Failed",

@@ -4,6 +4,11 @@
         android:label="app_kms"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <application
+        android:requestLegacyExternalStorage="true"
+        android:name="io.flutter.app.FlutterApplication"
+        android:label="xxxxxx"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
