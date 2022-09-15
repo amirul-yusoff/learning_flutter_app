@@ -48,6 +48,45 @@ class _DailyRecordMainPageState extends State<DailyRecordMainPage> {
                   crossAxisCount: 2,
                   childAspectRatio: ((itemWidth / itemHeight) * 2),
                   children: [
+                    // Center(
+                    //   child: ClipRRect(
+                    //     borderRadius: BorderRadius.circular(40),
+                    //     child: Material(
+                    //       color: Colors.blue[100],
+                    //       elevation: 8,
+                    //       child: InkWell(
+                    //           highlightColor: Colors.yellow.withOpacity(0.3),
+                    //           splashColor: Colors.red.withOpacity(0.5),
+                    //           onTap: () {
+                    //             Navigator.push(
+                    //               context,
+                    //               MaterialPageRoute(
+                    //                   builder: (context) =>
+                    //                       dailyRecordCreatePage(
+                    //                           user: widget.user)),
+                    //             );
+                    //           },
+                    //           child: Column(
+                    //             mainAxisSize: MainAxisSize.max,
+                    //             children: const <Widget>[
+                    //               SizedBox(height: 40),
+                    //               Text(
+                    //                 "Create Daily Record",
+                    //                 textAlign: TextAlign.center,
+                    //                 style: TextStyle(
+                    //                     fontSize: 20,
+                    //                     fontWeight: FontWeight.bold),
+                    //               ),
+                    //               Center(
+                    //                   child: Icon(
+                    //                 Icons.list,
+                    //                 size: 80,
+                    //               )),
+                    //             ],
+                    //           )),
+                    //     ),
+                    //   ),
+                    // ),
                     Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(40),

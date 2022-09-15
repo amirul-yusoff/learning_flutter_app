@@ -14,6 +14,7 @@
 		exit('Something weird happened'); //something a user can understand
 	}
     
+    $project_code = $_GET['_projectcode'];
     $page = $_GET['_page'];
     $limit = $_GET['_limit'];
     $s = $pdo->prepare("SELECT * FROM daily_record");
@@ -28,8 +29,8 @@
 
     $start = ($page-1)*$limit;
 
-    $stmt = $pdo->prepare("SELECT * FROM daily_record ORDER BY daily_record_id DESC LIMIT $start, $limit");
-    $stmt->execute();
+    $stmt = $pdo->prepare("SELECT * FROM daily_record WHERE project_code = ? ORDER BY daily_record_id DESC LIMIT $start, $limit");
+    $stmt->execute([$project_code]);
 
     // set the resulting array to associative
     $stmt->setFetchMode(PDO::FETCH_OBJ);

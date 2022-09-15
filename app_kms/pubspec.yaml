@@ -45,6 +45,7 @@ dependencies:
   page_transition: ^2.0.9
   toggle_switch: ^2.0.1
   font_awesome_flutter: ^10.1.0
+  dropdown_search: ^3.0.1
 
 dev_dependencies:
   flutter_test:

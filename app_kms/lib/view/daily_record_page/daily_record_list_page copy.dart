@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:ndialog/ndialog.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 
 class DailyRecordPage extends StatefulWidget {
   final User user;
@@ -21,8 +20,6 @@ class DailyRecordPage extends StatefulWidget {
 }
 
 class _DailyRecordPageState extends State<DailyRecordPage> {
-  List<String> _LProjectCode = <String>[];
-
   // We will fetch data from this Rest api
   // final _baseUrl = 'https://jsonplaceholder.typicode.com/posts';
   final _baseUrl = MyConfig.server + "/daily_record_list_with_pagination.php";
@@ -44,17 +41,14 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
   // This holds the posts fetched from the server
   List _posts = [];
 
-  // This holds the posts project code
-  var _project_code = null;
-
   // This function will be called when the app launches (see the initState function)
   void _firstLoad() async {
     setState(() {
       _isFirstLoadRunning = true;
     });
     try {
-      final res = await http.get(Uri.parse(
-          "$_baseUrl?_page=$_page&_limit=$_limit&_projectcode=$_project_code"));
+      final res =
+          await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
       setState(() {
         var jsonData = json.decode(res.body);
         var streetsFromJson = jsonData['project_data'];
@@ -83,8 +77,8 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
       });
       _page += 1; // Increase _page by 1
       try {
-        final res = await http.get(Uri.parse(
-            "$_baseUrl?_page=$_page&_limit=$_limit&_projectcode=$_project_code"));
+        final res =
+            await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
         var jsonData = json.decode(res.body);
         var streetsFromJson = jsonData['project_data'];
         final List fetchedPosts = streetsFromJson;
@@ -117,9 +111,6 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      getState();
-    });
     _firstLoad();
     _controller = ScrollController()..addListener(_loadMore);
   }
@@ -133,96 +124,82 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Daily Record'),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              DropdownSearch<String>(
-                mode: Mode.MENU,
-                showSelectedItems: true,
-                items: _LProjectCode,
-                dropdownSearchDecoration: const InputDecoration(
-                  labelText: "Choose Project Code",
-                  hintText: "Project Code",
-                ),
-                onChanged: selectProjectCode,
-                showSearchBox: true,
-                searchFieldProps: const TextFieldProps(
-                  cursorColor: Colors.blue,
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  controller: _controller,
-                  itemCount: _posts.length,
-                  itemBuilder: (_, index) => GestureDetector(
-                    onTap: () => {
-                      _getProjectInfo(
-                          _posts[index]["daily_record_id"].toString())
-                    },
-                    child: Card(
-                      elevation: 4,
-                      shape: const RoundedRectangleBorder(
-                        side: BorderSide(),
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 10),
-                      child: ListTile(
-                        leading: Text(
-                          (index + 1).toString() +
-                              ")" +
-                              _posts[index]['project_code'].toString(),
-                          style: const TextStyle(fontSize: 24),
+      appBar: AppBar(
+        title: const Text('Daily Record List'),
+      ),
+      body: _isFirstLoadRunning
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    controller: _controller,
+                    itemCount: _posts.length,
+                    itemBuilder: (_, index) => GestureDetector(
+                      onTap: () => {
+                        _getProjectInfo(
+                            _posts[index]["daily_record_id"].toString())
+                      },
+                      child: Card(
+                        elevation: 4,
+                        shape: const RoundedRectangleBorder(
+                          side: BorderSide(),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
-                        title: Text("Serial No : " +
-                            _posts[index]['serial_no'].toString() +
-                            "\n(" +
-                            _posts[index]['record_date'].toString() +
-                            ")\n"),
-                        subtitle:
-                            Text(_posts[index]["site_activity"].toString()),
-                        trailing: Text(_posts[index]['record_by'].toString()),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 10),
+                        child: ListTile(
+                          leading: Text(
+                            (index + 1).toString() +
+                                ")" +
+                                _posts[index]['project_code'].toString(),
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                          title: Text("Serial No : " +
+                              _posts[index]['serial_no'].toString() +
+                              "\n(" +
+                              _posts[index]['record_date'].toString() +
+                              ")\n"),
+                          subtitle:
+                              Text(_posts[index]["site_activity"].toString()),
+                          trailing: Text(_posts[index]['record_by'].toString()),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              if (_isLoadMoreRunning == true)
-                const Padding(
-                  padding: EdgeInsets.only(top: 10, bottom: 40),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
 
-              // When nothing else to load
-              if (_hasNextPage == false)
-                Container(
-                  padding: const EdgeInsets.only(top: 30, bottom: 40),
-                  color: Colors.amber,
-                  child: const Center(
-                    child: Text('You have fetched all of the content'),
+                // when the _loadMore function is running
+                if (_isLoadMoreRunning == true)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 40),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
-                ),
-            ],
-          ),
-        ));
+
+                // When nothing else to load
+                if (_hasNextPage == false)
+                  Container(
+                    padding: const EdgeInsets.only(top: 30, bottom: 40),
+                    color: Colors.amber,
+                    child: const Center(
+                      child: Text('You have fetched all of the content'),
+                    ),
+                  ),
+              ],
+            ),
+    );
   }
 
   void _getProjectInfo(String dailyRecordID) {
+    print(dailyRecordID);
+
     http.post(Uri.parse(MyConfig.server + "/daily_record_details.php"),
         body: {"dailyRecordID": dailyRecordID}).then((response) {
-      print(jsonDecode(response.body));
+      print(response.statusCode);
 
       var jsondata = jsonDecode(response.body);
       if (response.statusCode == 200) {
@@ -249,36 +226,5 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
             fontSize: 14.0);
       }
     });
-  }
-
-  selectProjectCode(String? projectCode) async {
-    var afterSplit = projectCode.toString().split('-');
-
-    setState(() {
-      _project_code = afterSplit[0];
-      _firstLoad();
-    });
-  }
-
-  Future getState() async {
-    var baseUrl = MyConfig.server + "/project_code_list_selection.php";
-
-    ProgressDialog progressDialog = ProgressDialog(context,
-        message: const Text("Please wait.."),
-        title: const Text("Updating List"));
-    progressDialog.show();
-    http.Response response = await http.get(Uri.parse(baseUrl));
-    if (response.statusCode == 200) {
-      var jsonData = json.decode(response.body);
-      setState(() {
-        for (var i = 0; i < jsonData['project_data'].length; i++) {
-          _LProjectCode.add(jsonData['project_data'][i]['Project_Code']
-                  .toUpperCase() +
-              '-' +
-              jsonData['project_data'][i]['Project_Short_name'].toUpperCase());
-        }
-      });
-    }
-    progressDialog.dismiss();
   }
 }

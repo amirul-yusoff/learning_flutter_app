@@ -389,13 +389,13 @@ class _DailyRecordDetailsState extends State<DailyRecordDetails> {
   _calculatePercentages() {
     for (var i = 0; i < _foundWorkorders.length; i++) {
       var workdone = _foundWorkorders[i]['sum_workdone'];
-      if (workdone.isEmpty) {
+      if (workdone.isEmpty || workdone == '') {
         workdone = '0.0';
       }
       workdone = double.parse(workdone);
 
       var allqty = _foundWorkorders[i]['total_qty'];
-      if (allqty.isEmpty) {
+      if (allqty.isEmpty || workdone == '') {
         allqty = '0.0';
       }
       allqty = double.parse(allqty);
