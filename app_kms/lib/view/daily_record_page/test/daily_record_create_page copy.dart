@@ -1,254 +1,60 @@
-import 'dart:convert';
-
-import 'package:app_kms/model/config.dart';
-import 'package:app_kms/model/dailyRecordWorkorderform.dart';
+import 'package:app_kms/model/projectInfo.dart';
 import 'package:app_kms/model/user.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_search/dropdown_search.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:ndialog/ndialog.dart';
-import 'package:http/http.dart' as http;
+import 'package:date_field/date_field.dart';
+import 'package:intl/intl.dart';
 
-class dailyRecordCreatePage extends StatefulWidget {
+class DailyRecordCreatePage extends StatefulWidget {
   final User user;
-  const dailyRecordCreatePage({Key? key, required this.user}) : super(key: key);
+  final ProjectInfo projectInfo;
+  const DailyRecordCreatePage(
+      {Key? key, required this.user, required this.projectInfo})
+      : super(key: key);
 
   @override
-  State<dailyRecordCreatePage> createState() => _dailyRecordCreatePageState();
+  State<DailyRecordCreatePage> createState() => _DailyRecordCreatePageState();
 }
 
-class _dailyRecordCreatePageState extends State<dailyRecordCreatePage> {
-  List<String> _ProjectCode = <String>[];
-  List<String> _Workorder = <String>[];
-  List<DailyRecordWorkorderform> workorderForm = [];
-  List<Widget> _cardList = [];
-
-  var selectedProjectCode;
-  var selectedWorkorder;
-  int start = 0;
-  void _addCardWidget() {
-    setState(() {
-      _cardList.add(_card());
-    });
-  }
-
-  Widget _card() {
-    return Container(
-      height: 80,
-      margin: EdgeInsets.only(top: 5, left: 8, right: 8),
-      decoration: new BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.orangeAccent[100],
-      ),
-      child: Center(
-        child: ListTile(
-          leading: CircleAvatar(
-            radius: 28,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 26,
-              backgroundImage: NetworkImage(
-                  "https://i.pinimg.com/originals/71/83/70/7183704aac01413c86805c19c1586e2b.jpg"),
-            ),
-          ),
-          title: Text(
-            "Freedom Fighter",
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Colors.deepPurple),
-          ),
-          subtitle: Text(
-            'Freedom Fighter',
-            style: TextStyle(
-                fontWeight: FontWeight.w600, fontSize: 16, color: Colors.white),
-          ),
-          trailing: Card(
-            elevation: 1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Container(
-                width: 50,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('5',
-                        style: TextStyle(fontSize: 20, color: Colors.grey)),
-                    SizedBox(
-                      width: 1,
-                    ),
-                    Icon(
-                      Icons.access_alarms_outlined,
-                      textDirection: TextDirection.rtl,
-                      size: 20,
-                      color: Colors.grey,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () {
-      getState();
-    });
-  }
+class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
+  String dateStartselected = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String dateEndselected = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  DateTime now = DateTime.now();
+  String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  final format = DateFormat("yyyy-MM-dd");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Daily Record'),
+        title: Text(
+            'Create Daily Record ' + widget.projectInfo.projectCode.toString()),
       ),
       body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: ListView(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Column(
             children: [
-              Center(
-                child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: _cardList.length,
-                    itemBuilder: (context, index) {
-                      return _cardList[index];
-                    }),
-              ),
-              DropdownSearch<String>(
-                mode: Mode.MENU,
-                showSelectedItems: true,
-                items: _ProjectCode,
-                dropdownSearchDecoration: const InputDecoration(
-                  labelText: "Choose Project Code",
-                  hintText: "Project Code",
-                ),
-                onChanged: itemSelectionChangedgetWorkorder,
-                selectedItem: selectedProjectCode,
-                showSearchBox: true,
-                searchFieldProps: const TextFieldProps(
-                  cursorColor: Colors.blue,
+              const SizedBox(height: 30),
+              Flexible(
+                flex: 2,
+                child: Image.asset(
+                  'assets/images/main_page.png',
+                  scale: 1,
                 ),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                // style: style,
-                onPressed: _addCardWidget,
-                child: const Text('Add Workorder'),
+              Flexible(
+                flex: 8,
+                child: Text('asdsad'),
               ),
-              const SizedBox(height: 20),
-              Card(
-                  child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    DropdownSearch<String>(
-                      mode: Mode.DIALOG,
-                      showSelectedItems: true,
-                      items: _Workorder,
-                      dropdownSearchDecoration: const InputDecoration(
-                        labelText: "Choose Workorder",
-                        hintText: "Workorder",
-                      ),
-                      // onChanged: null,
-                      selectedItem: selectedWorkorder,
-                      showSearchBox: true,
-                      searchFieldProps: const TextFieldProps(
-                        cursorColor: Colors.blue,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              )),
             ],
           ),
         ),
       ),
     );
-  }
-
-  void onAddForm() {
-    setState(() {
-      start++;
-      print(start);
-    });
-    print("add");
-  }
-
-  Future itemSelectionChangedgetWorkorder(String? pcode) async {
-    var afterSplit = pcode.toString().split('-');
-
-    setState(() {
-      _Workorder = [];
-      _Workorder.clear();
-      selectedProjectCode = afterSplit[0];
-      selectedWorkorder = '';
-    });
-
-    http.post(Uri.parse(MyConfig.server + "/find_workorder_by_project.php"),
-        body: {
-          "projectCode": afterSplit[0].toString(),
-        }).then((response) {
-      var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        Fluttertoast.showToast(
-            msg: "Found Workorder",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-        setState(() {
-          _Workorder.clear();
-          selectedWorkorder = null;
-          for (var i = 0; i < jsondata['project_data'].length; i++) {
-            _Workorder.add(
-                jsondata['project_data'][i]['WorkOrderNumber'].toString());
-          }
-        });
-      } else {
-        Fluttertoast.showToast(
-            msg: "Failed",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-      }
-    });
-  }
-
-  Future getState() async {
-    var baseUrl = MyConfig.server + "/project_code_list_selection.php";
-
-    ProgressDialog progressDialog = ProgressDialog(context,
-        message: const Text("Please wait.."),
-        title: const Text("Updating List"));
-    progressDialog.show();
-    http.Response response = await http.get(Uri.parse(baseUrl));
-    if (response.statusCode == 200) {
-      var jsonData = json.decode(response.body);
-      setState(() {
-        _ProjectCode.clear();
-        selectedWorkorder = null;
-        for (var i = 0; i < jsonData['project_data'].length; i++) {
-          _ProjectCode.add(jsonData['project_data'][i]['Project_Code']
-                  .toUpperCase() +
-              '-' +
-              jsonData['project_data'][i]['Project_Short_name'].toUpperCase());
-        }
-      });
-    }
-    progressDialog.dismiss();
   }
 }

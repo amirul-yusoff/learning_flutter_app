@@ -5,6 +5,7 @@ import 'package:date_field/date_field.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class DailyRecordCreatePage extends StatefulWidget {
   final User user;
@@ -31,6 +32,21 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
   List<String> _shiftSelection = <String>['Morning', 'Night'];
   var selectedShift;
 
+  final ImagePicker imgpickerProgress = ImagePicker();
+  final ImagePicker imgpickerSLD = ImagePicker();
+  final ImagePicker imgpickerToolbox = ImagePicker();
+  final ImagePicker imgpickerDo = ImagePicker();
+  final ImagePicker imgpickerGiSlip = ImagePicker();
+  final ImagePicker imgpickerJMS = ImagePicker();
+  final ImagePicker imgpickerDR = ImagePicker();
+  List<XFile>? imagefilesProgress;
+  List<XFile>? imagefilesSLD;
+  List<XFile>? imagefilesToolbox;
+  List<XFile>? imagefilesDo;
+  List<XFile>? imagefilesGiSlip;
+  List<XFile>? imagefilesJMS;
+  List<XFile>? imagefilesDR;
+
   @override
   Widget build(BuildContext context) {
     late double screenHeight, screenWidth, resWidth, resHeight;
@@ -53,83 +69,77 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-            'Create Daily Record ' + widget.projectInfo.projectCode.toString()),
-      ),
-      body: Container(
-        // decoration: const BoxDecoration(
-        //   image: DecorationImage(
-        //     image: AssetImage('assets/images/background.png'),
-        //     fit: BoxFit.cover,
-        //   ),
-        // ),
-        child: Center(
+        appBar: AppBar(
+          title: Text('Create Daily Record ' +
+              widget.projectInfo.projectCode.toString()),
+        ),
+        body: Center(
           child: Column(
             children: [
-              const SizedBox(height: 5),
               Flexible(
                 flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SingleChildScrollView(
-                    child: Table(
-                      columnWidths: const {
-                        0: FractionColumnWidth(0.3),
-                        1: FractionColumnWidth(0.7)
-                      },
-                      defaultVerticalAlignment: TableCellVerticalAlignment.top,
-                      children: [
-                        TableRow(children: [
-                          const Text('Project Code',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text(widget.projectInfo.projectCode.toString()),
-                        ]),
-                        TableRow(children: [
-                          const Text('Project Name',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text(widget.projectInfo.projectShortName.toString()),
-                        ]),
-                        TableRow(children: [
-                          const Text('HOD Name',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text(widget.projectInfo.hodName.toString()),
-                        ]),
-                        TableRow(children: [
-                          const Text('PM Name',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text(widget.projectInfo.pmName.toString()),
-                        ]),
-                        TableRow(children: [
-                          const Text('PE Name',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text(widget.projectInfo.peName.toString()),
-                        ]),
-                      ],
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SingleChildScrollView(
+                      child: Table(
+                        columnWidths: const {
+                          0: FractionColumnWidth(0.3),
+                          1: FractionColumnWidth(0.7)
+                        },
+                        defaultVerticalAlignment:
+                            TableCellVerticalAlignment.top,
+                        children: [
+                          TableRow(children: [
+                            const Text('Project Code',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(widget.projectInfo.projectCode.toString()),
+                          ]),
+                          TableRow(children: [
+                            const Text('Project Name',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(
+                                widget.projectInfo.projectShortName.toString()),
+                          ]),
+                          TableRow(children: [
+                            const Text('HOD Name',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(widget.projectInfo.hodName.toString()),
+                          ]),
+                          TableRow(children: [
+                            const Text('PM Name',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(widget.projectInfo.pmName.toString()),
+                          ]),
+                          TableRow(children: [
+                            const Text('PE Name',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(widget.projectInfo.peName.toString()),
+                          ]),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 5),
               Flexible(
-                flex: 10,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Card(
-                        elevation: 10,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                  flex: 8,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(20),
                           child: Column(
                             children: [
-                              const SizedBox(
-                                height: 30,
-                              ),
                               DateTimeFormField(
                                 dateFormat: format,
                                 initialValue: DateTime.now(),
@@ -165,6 +175,7 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                 dropdownSearchDecoration: const InputDecoration(
                                   labelText: "Choose Shift",
                                   hintText: "Shift",
+                                  border: OutlineInputBorder(),
                                   icon: Icon(
                                     Icons.sunny_snowing,
                                   ),
@@ -189,6 +200,7 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                       icon: Icon(
                                         Icons.confirmation_number_rounded,
                                       ),
+                                      border: OutlineInputBorder(),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(width: 2.0),
                                       ))),
@@ -204,10 +216,328 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                     labelText: 'Site Activities',
                                     alignLabelWithHint: true,
                                     labelStyle: TextStyle(),
+                                    border: OutlineInputBorder(),
                                     icon: Icon(
                                       Icons.list_alt_outlined,
                                     ),
                                   )),
+                              const SizedBox(
+                                height: 60,
+                              ),
+                              //open button Progress----------------
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(
+                                              resWidth / 2, resWidth * 0.1)),
+                                      child:
+                                          const Text('Choose Progress Image'),
+                                      onPressed: () => {
+                                        openImages(),
+                                      },
+                                    ),
+                                    const Divider(),
+                                    const Text("Picked Progress Image:"),
+                                    const Divider(),
+                                    imagefilesProgress != null
+                                        ? Wrap(
+                                            children: imagefilesProgress!
+                                                .map((imageone) {
+                                              return Container(
+                                                  child: Card(
+                                                child: Container(
+                                                  height: 100,
+                                                  width: 100,
+                                                  child: Image.file(
+                                                      File(imageone.path)),
+                                                ),
+                                              ));
+                                            }).toList(),
+                                          )
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    //open button SLD----------------
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(
+                                              resWidth / 2, resWidth * 0.1)),
+                                      child: const Text('Choose SLD Image'),
+                                      onPressed: () => {
+                                        openImagesSLD(),
+                                      },
+                                    ),
+                                    const Divider(),
+                                    const Text("Picked SLD Image:"),
+                                    const Divider(),
+                                    imagefilesSLD != null
+                                        ? Wrap(
+                                            children:
+                                                imagefilesSLD!.map((imageone) {
+                                              return Container(
+                                                  child: Card(
+                                                child: Container(
+                                                  height: 100,
+                                                  width: 100,
+                                                  child: Image.file(
+                                                      File(imageone.path)),
+                                                ),
+                                              ));
+                                            }).toList(),
+                                          )
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    //open button Toolbox----------------
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(
+                                              resWidth / 2, resWidth * 0.1)),
+                                      child: const Text('Choose Toolbox Image'),
+                                      onPressed: () => {
+                                        openImagesToolbox(),
+                                      },
+                                    ),
+                                    const Divider(),
+                                    const Text("Picked Toolbox Image:"),
+                                    const Divider(),
+                                    imagefilesToolbox != null
+                                        ? Wrap(
+                                            children: imagefilesToolbox!
+                                                .map((imageone) {
+                                              return Container(
+                                                  child: Card(
+                                                child: Container(
+                                                  height: 100,
+                                                  width: 100,
+                                                  child: Image.file(
+                                                      File(imageone.path)),
+                                                ),
+                                              ));
+                                            }).toList(),
+                                          )
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    //open button Do----------------
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(
+                                              resWidth / 2, resWidth * 0.1)),
+                                      child: const Text('Choose Do Image'),
+                                      onPressed: () => {
+                                        openImagesDo(),
+                                      },
+                                    ),
+                                    const Divider(),
+                                    const Text("Picked Do Image:"),
+                                    const Divider(),
+                                    imagefilesDo != null
+                                        ? Wrap(
+                                            children:
+                                                imagefilesDo!.map((imageone) {
+                                              return Container(
+                                                  child: Card(
+                                                child: Container(
+                                                  height: 100,
+                                                  width: 100,
+                                                  child: Image.file(
+                                                      File(imageone.path)),
+                                                ),
+                                              ));
+                                            }).toList(),
+                                          )
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    //open button GiSlip----------------
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(
+                                              resWidth / 2, resWidth * 0.1)),
+                                      child: const Text('Choose Gi Slip Image'),
+                                      onPressed: () => {
+                                        openImagesGiSlip(),
+                                      },
+                                    ),
+                                    const Divider(),
+                                    const Text("Picked Gi Slip Image:"),
+                                    const Divider(),
+                                    imagefilesGiSlip != null
+                                        ? Wrap(
+                                            children: imagefilesGiSlip!
+                                                .map((imageone) {
+                                              return Container(
+                                                  child: Card(
+                                                child: Container(
+                                                  height: 100,
+                                                  width: 100,
+                                                  child: Image.file(
+                                                      File(imageone.path)),
+                                                ),
+                                              ));
+                                            }).toList(),
+                                          )
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    //open button JMS----------------
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(
+                                              resWidth / 2, resWidth * 0.1)),
+                                      child: const Text('Choose JMS Image'),
+                                      onPressed: () => {
+                                        openImagesJMS(),
+                                      },
+                                    ),
+                                    const Divider(),
+                                    const Text("Picked JMS Image:"),
+                                    const Divider(),
+                                    imagefilesJMS != null
+                                        ? Wrap(
+                                            children:
+                                                imagefilesJMS!.map((imageone) {
+                                              return Container(
+                                                  child: Card(
+                                                child: Container(
+                                                  height: 100,
+                                                  width: 100,
+                                                  child: Image.file(
+                                                      File(imageone.path)),
+                                                ),
+                                              ));
+                                            }).toList(),
+                                          )
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    //open button DR----------------
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(
+                                              resWidth / 2, resWidth * 0.1)),
+                                      child: const Text(
+                                          'Choose Daily Record Image'),
+                                      onPressed: () => {
+                                        openImagesDR(),
+                                      },
+                                    ),
+                                    const Divider(),
+                                    const Text("Picked Daily Record Image:"),
+                                    const Divider(),
+                                    imagefilesDR != null
+                                        ? Wrap(
+                                            children:
+                                                imagefilesDR!.map((imageone) {
+                                              return Container(
+                                                  child: Card(
+                                                child: Container(
+                                                  height: 100,
+                                                  width: 100,
+                                                  child: Image.file(
+                                                      File(imageone.path)),
+                                                ),
+                                              ));
+                                            }).toList(),
+                                          )
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                  ],
+                                ),
+                              ),
                               const SizedBox(
                                 height: 60,
                               ),
@@ -220,22 +550,15 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                   _newRecordDialog(),
                                 },
                               ),
-                              const SizedBox(
-                                height: 40,
-                              ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                      ],
+                    ),
+                  ))
             ],
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   void _newRecordDialog() {
@@ -252,5 +575,110 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
     setState(() {
       selectedShift = shift;
     });
+  }
+
+  openImages() async {
+    try {
+      var pickedfilesProgress = await imgpickerProgress.pickMultiImage();
+      //you can use ImageCourse.camera for Camera capture
+      if (pickedfilesProgress != null) {
+        imagefilesProgress = pickedfilesProgress;
+        setState(() {});
+      } else {
+        print("No image is selected.");
+      }
+    } catch (e) {
+      print("error while picking file.");
+    }
+  }
+
+  openImagesSLD() async {
+    try {
+      var pickedfilesSLD = await imgpickerSLD.pickMultiImage();
+      //you can use ImageCourse.camera for Camera capture
+      if (pickedfilesSLD != null) {
+        imagefilesSLD = pickedfilesSLD;
+        setState(() {});
+      } else {
+        print("No image is selected.");
+      }
+    } catch (e) {
+      print("error while picking file.");
+    }
+  }
+
+  openImagesToolbox() async {
+    try {
+      var pickedfilesToolbox = await imgpickerToolbox.pickMultiImage();
+      //you can use ImageCourse.camera for Camera capture
+      if (pickedfilesToolbox != null) {
+        imagefilesToolbox = pickedfilesToolbox;
+        setState(() {});
+      } else {
+        print("No image is selected.");
+      }
+    } catch (e) {
+      print("error while picking file.");
+    }
+  }
+
+  openImagesDo() async {
+    try {
+      var pickedfilesDo = await imgpickerDo.pickMultiImage();
+      //you can use ImageCourse.camera for Camera capture
+      if (pickedfilesDo != null) {
+        imagefilesDo = pickedfilesDo;
+        setState(() {});
+      } else {
+        print("No image is selected.");
+      }
+    } catch (e) {
+      print("error while picking file.");
+    }
+  }
+
+  openImagesGiSlip() async {
+    try {
+      var pickedfilesGiSlip = await imgpickerGiSlip.pickMultiImage();
+      //you can use ImageCourse.camera for Camera capture
+      if (pickedfilesGiSlip != null) {
+        imagefilesGiSlip = pickedfilesGiSlip;
+        setState(() {});
+      } else {
+        print("No image is selected.");
+      }
+    } catch (e) {
+      print("error while picking file.");
+    }
+  }
+
+  openImagesJMS() async {
+    try {
+      var pickedfilesJMS = await imgpickerJMS.pickMultiImage();
+      //you can use ImageCourse.camera for Camera capture
+      if (pickedfilesJMS != null) {
+        imagefilesJMS = pickedfilesJMS;
+        setState(() {});
+      } else {
+        print("No image is selected.");
+      }
+    } catch (e) {
+      print("error while picking file.");
+    }
+  }
+
+  openImagesDR() async {
+    try {
+      var pickedfilesDR = await imgpickerDR.pickMultiImage();
+      //you can use ImageCourse.camera for Camera capture
+      if (pickedfilesDR != null) {
+        imagefilesDR = pickedfilesDR;
+        setState(() {});
+      } else {
+        print("No image is selected.");
+      }
+    } catch (e) {
+      print("error while picking file.");
+    }
   }
 }

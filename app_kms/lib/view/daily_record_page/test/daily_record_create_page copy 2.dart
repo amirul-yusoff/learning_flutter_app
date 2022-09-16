@@ -1,203 +1,311 @@
-import 'dart:convert';
-
-import 'package:app_kms/model/config.dart';
-import 'package:app_kms/model/dailyRecordWorkorderform.dart';
+import 'package:app_kms/model/projectInfo.dart';
 import 'package:app_kms/model/user.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:date_field/date_field.dart';
+import 'package:intl/intl.dart';
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:ndialog/ndialog.dart';
-import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
-class dailyRecordCreatePage extends StatefulWidget {
+class DailyRecordCreatePage extends StatefulWidget {
   final User user;
-  const dailyRecordCreatePage({Key? key, required this.user}) : super(key: key);
+  final ProjectInfo projectInfo;
+  const DailyRecordCreatePage(
+      {Key? key, required this.user, required this.projectInfo})
+      : super(key: key);
 
   @override
-  State<dailyRecordCreatePage> createState() => _dailyRecordCreatePageState();
+  State<DailyRecordCreatePage> createState() => _DailyRecordCreatePageState();
 }
 
-class _dailyRecordCreatePageState extends State<dailyRecordCreatePage> {
-  List<String> _ProjectCode = <String>[];
-  List<String> _Workorder = <String>[];
-  List<DailyRecordWorkorderform> workorderForm = [];
-  List<Widget> _cardList = [];
+class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
+  String dateActivityselected = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String dateEndselected = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  DateTime now = DateTime.now();
+  String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  final format = DateFormat("yyyy-MM-dd");
 
-  var selectedProjectCode;
-  var selectedWorkorder;
-  int start = 0;
-  void _addCardWidget() {
-    setState(() {
-      _cardList.add(_card());
-    });
-  }
-
-  Widget _card() {
-    return Container(
-      child: Center(
-          child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            DropdownSearch<String>(
-              mode: Mode.DIALOG,
-              showSelectedItems: true,
-              items: _Workorder,
-              dropdownSearchDecoration: const InputDecoration(
-                labelText: "Choose Workorder",
-                hintText: "Workorder",
-              ),
-              // onChanged: null,
-              selectedItem: selectedWorkorder,
-              showSearchBox: true,
-              searchFieldProps: const TextFieldProps(
-                cursorColor: Colors.blue,
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      )),
-    );
-  }
-
-  @override
-  initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () {
-      getState();
-    });
-  }
+  final TextEditingController _shiftController = TextEditingController();
+  final TextEditingController _serialNumberController = TextEditingController();
+  final TextEditingController _siteActivitiesController =
+      TextEditingController();
+  List<String> _shiftSelection = <String>['Morning', 'Night'];
+  var selectedShift;
 
   @override
   Widget build(BuildContext context) {
+    late double screenHeight, screenWidth, resWidth, resHeight;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width / 2;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    int rowcount = 2;
+    if (screenWidth <= 600) {
+      resWidth = screenWidth;
+      rowcount = 2;
+    } else {
+      resWidth = screenWidth * 0.75;
+      rowcount = 3;
+    }
+
+    final ImagePicker imgpicker = ImagePicker();
+    List<XFile>? imagefiles;
+    openImages() async {
+      try {
+        var pickedfiles = await imgpicker.pickMultiImage();
+        print("HERE.");
+        //you can use ImageCourse.camera for Camera capture
+        if (pickedfiles != null) {
+          print("MANAGE.");
+
+          // imagefiles = pickedfiles;
+          setState(() {
+            imagefiles = pickedfiles;
+          });
+          print(imagefiles);
+          print(pickedfiles);
+        } else {
+          print("No image is selected.");
+        }
+      } catch (e) {
+        print("error while picking file.");
+      }
+    }
+
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addCardWidget,
-      ),
       appBar: AppBar(
-        title: const Text('Create Daily Record'),
+        title: Text(
+            'Create Daily Record ' + widget.projectInfo.projectCode.toString()),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-            padding: EdgeInsets.all(15),
-            child: Column(
-              children: [
-                DropdownSearch<String>(
-                  mode: Mode.MENU,
-                  showSelectedItems: true,
-                  items: _ProjectCode,
-                  dropdownSearchDecoration: const InputDecoration(
-                    labelText: "Choose Project Code",
-                    hintText: "Project Code",
-                  ),
-                  onChanged: itemSelectionChangedgetWorkorder,
-                  selectedItem: selectedProjectCode,
-                  showSearchBox: true,
-                  searchFieldProps: const TextFieldProps(
-                    cursorColor: Colors.blue,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(height: 5),
+              Flexible(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(
+                    child: Table(
+                      columnWidths: const {
+                        0: FractionColumnWidth(0.3),
+                        1: FractionColumnWidth(0.7)
+                      },
+                      defaultVerticalAlignment: TableCellVerticalAlignment.top,
+                      children: [
+                        TableRow(children: [
+                          const Text('Project Code',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(widget.projectInfo.projectCode.toString()),
+                        ]),
+                        TableRow(children: [
+                          const Text('Project Name',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(widget.projectInfo.projectShortName.toString()),
+                        ]),
+                        TableRow(children: [
+                          const Text('HOD Name',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(widget.projectInfo.hodName.toString()),
+                        ]),
+                        TableRow(children: [
+                          const Text('PM Name',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(widget.projectInfo.pmName.toString()),
+                        ]),
+                        TableRow(children: [
+                          const Text('PE Name',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(widget.projectInfo.peName.toString()),
+                        ]),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  // style: style,
-                  onPressed: _addCardWidget,
-                  child: const Text('Add Workorder'),
+              ),
+              const SizedBox(height: 5),
+              Flexible(
+                flex: 10,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Card(
+                        elevation: 10,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              DateTimeFormField(
+                                dateFormat: format,
+                                initialValue: DateTime.now(),
+                                decoration: const InputDecoration(
+                                  icon: Icon(
+                                    Icons.event_note,
+                                  ),
+                                  hintStyle: TextStyle(color: Colors.black45),
+                                  errorStyle:
+                                      TextStyle(color: Colors.redAccent),
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Select Activity Date',
+                                ),
+                                mode: DateTimeFieldPickerMode.date,
+                                autovalidateMode: AutovalidateMode.always,
+                                onDateSelected: (DateTime date) {
+                                  setState(() {
+                                    String stringdate = date.toString();
+                                    dateActivityselected =
+                                        stringdate.replaceAll(
+                                            RegExp(r' 00:00:00.000'), '');
+                                    dateActivityselected = dateActivityselected;
+                                  });
+                                },
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              DropdownSearch<String>(
+                                mode: Mode.MENU,
+                                showSelectedItems: true,
+                                items: _shiftSelection,
+                                dropdownSearchDecoration: const InputDecoration(
+                                  labelText: "Choose Shift",
+                                  hintText: "Shift",
+                                  icon: Icon(
+                                    Icons.sunny_snowing,
+                                  ),
+                                ),
+                                onChanged: _shiftChange,
+                                selectedItem: selectedShift,
+                                showSearchBox: true,
+                                searchFieldProps: const TextFieldProps(
+                                  cursorColor: Colors.blue,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              TextFormField(
+                                  textInputAction: TextInputAction.next,
+                                  controller: _serialNumberController,
+                                  keyboardType: TextInputType.text,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Serial Number',
+                                      labelStyle: TextStyle(),
+                                      icon: Icon(
+                                        Icons.confirmation_number_rounded,
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(width: 2.0),
+                                      ))),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              TextFormField(
+                                  // textInputAction: TextInputAction.next,
+                                  maxLines: 10,
+                                  controller: _siteActivitiesController,
+                                  // keyboardType: TextInputType.text,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Site Activities',
+                                    alignLabelWithHint: true,
+                                    labelStyle: TextStyle(),
+                                    icon: Icon(
+                                      Icons.list_alt_outlined,
+                                    ),
+                                  )),
+                              const SizedBox(
+                                height: 60,
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    fixedSize:
+                                        Size(resWidth / 2, resWidth * 0.1)),
+                                child: const Text('Create Record'),
+                                onPressed: () => {
+                                  _newRecordDialog(),
+                                },
+                              ),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              Divider(),
+                              Text("Picked Files:"),
+                              Divider(),
+
+                              Container(
+                                child: imagefiles != null
+                                    ? Wrap(
+                                        children: imagefiles!.map((imageone) {
+                                          return Container(
+                                              child: Card(
+                                            child: Container(
+                                              height: 100,
+                                              width: 100,
+                                              child: Image.file(
+                                                  File(imageone.path)),
+                                            ),
+                                          ));
+                                        }).toList(),
+                                      )
+                                    : Container(
+                                        child: Text("no Image"),
+                                      ),
+                              ),
+                              //open button ----------------
+                              ElevatedButton(
+                                  onPressed: () {
+                                    openImages();
+                                  },
+                                  child: Text("Open Images")),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 20),
-                ListView.builder(
-                    padding: EdgeInsets.only(top: 10),
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: _cardList.length,
-                    itemBuilder: (context, index) {
-                      return _cardList[index];
-                    }),
-              ],
-            )),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-// ListView.builder(
-//           scrollDirection: Axis.vertical,
-//           shrinkWrap: true,
-//           itemCount: _cardList.length,
-//           itemBuilder: (context, index) {
-//             return _cardList[index];
-//           }),
+  void _newRecordDialog() {
+    String _serialnumber = _serialNumberController.text;
+    String _siteactivities = _siteActivitiesController.text;
 
-  void onAddForm() {
-    setState(() {
-      start++;
-      print(start);
-    });
-    print("add");
+    print(dateActivityselected);
+    print(selectedShift);
+    print(_serialnumber);
+    print(_siteactivities);
   }
 
-  Future itemSelectionChangedgetWorkorder(String? pcode) async {
-    var afterSplit = pcode.toString().split('-');
-
+  Future _shiftChange(String? shift) async {
     setState(() {
-      _Workorder = [];
-      _Workorder.clear();
-      selectedProjectCode = afterSplit[0];
-      selectedWorkorder = '';
+      selectedShift = shift;
     });
-
-    http.post(Uri.parse(MyConfig.server + "/find_workorder_by_project.php"),
-        body: {
-          "projectCode": afterSplit[0].toString(),
-        }).then((response) {
-      var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        Fluttertoast.showToast(
-            msg: "Found Workorder",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-        setState(() {
-          _Workorder.clear();
-          selectedWorkorder = null;
-          for (var i = 0; i < jsondata['project_data'].length; i++) {
-            _Workorder.add(
-                jsondata['project_data'][i]['WorkOrderNumber'].toString());
-          }
-        });
-      } else {
-        Fluttertoast.showToast(
-            msg: "Failed",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-      }
-    });
-  }
-
-  Future getState() async {
-    var baseUrl = MyConfig.server + "/project_code_list_selection.php";
-
-    ProgressDialog progressDialog = ProgressDialog(context,
-        message: const Text("Please wait.."),
-        title: const Text("Updating List"));
-    progressDialog.show();
-    http.Response response = await http.get(Uri.parse(baseUrl));
-    if (response.statusCode == 200) {
-      var jsonData = json.decode(response.body);
-      setState(() {
-        _ProjectCode.clear();
-        selectedWorkorder = null;
-        for (var i = 0; i < jsonData['project_data'].length; i++) {
-          _ProjectCode.add(jsonData['project_data'][i]['Project_Code']
-                  .toUpperCase() +
-              '-' +
-              jsonData['project_data'][i]['Project_Short_name'].toUpperCase());
-        }
-      });
-    }
-    progressDialog.dismiss();
   }
 }
