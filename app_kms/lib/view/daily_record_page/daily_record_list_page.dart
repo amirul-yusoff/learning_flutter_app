@@ -152,6 +152,7 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
                 dropdownSearchDecoration: const InputDecoration(
                   labelText: "Choose Project Code",
                   hintText: "Project Code",
+                  border: OutlineInputBorder(),
                 ),
                 onChanged: selectProjectCode,
                 showSearchBox: true,
@@ -264,7 +265,6 @@ class _DailyRecordPageState extends State<DailyRecordPage> {
   }
 
   _getProjectCode() {
-
     http.post(
         Uri.parse(MyConfig.server + "/daily_record_find_project_details.php"),
         body: {"project_code": _project_code}).then((response) {

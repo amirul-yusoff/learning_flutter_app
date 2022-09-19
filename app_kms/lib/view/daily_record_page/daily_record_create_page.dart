@@ -1,11 +1,17 @@
+import 'dart:convert';
+
+import 'package:app_kms/model/config.dart';
 import 'package:app_kms/model/projectInfo.dart';
 import 'package:app_kms/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:ndialog/ndialog.dart';
 
 class DailyRecordCreatePage extends StatefulWidget {
   final User user;
@@ -46,6 +52,21 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
   List<XFile>? imagefilesGiSlip;
   List<XFile>? imagefilesJMS;
   List<XFile>? imagefilesDR;
+
+  final ImagePicker imagePicker = ImagePicker();
+  List<XFile>? imageFileList = [];
+
+  int workorderCount = 1;
+  List<int> text = [0];
+  List<String> _LWorkorder = <String>[];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      getWorkorder();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +245,74 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                               const SizedBox(
                                 height: 60,
                               ),
-                              //open button Progress----------------
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    fixedSize:
+                                        Size(resWidth / 2, resWidth * 0.1)),
+                                child: const Text('Add Workorder'),
+                                onPressed: () => {
+                                  onAddForm(),
+                                },
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              workorderCount != 0
+                                  ? Column(
+                                      children: [
+                                        for (var i in text)
+                                          Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
+                                              child: Container(
+                                                child: Column(
+                                                  children: [
+                                                    Text("Workorder " +
+                                                        (i + 1).toString()),
+                                                    const SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    DropdownSearch<String>(
+                                                      mode: Mode.DIALOG,
+                                                      showSelectedItems: true,
+                                                      items: _LWorkorder,
+                                                      dropdownSearchDecoration:
+                                                          const InputDecoration(
+                                                        labelText:
+                                                            "Choose Workorder",
+                                                        hintText: "Workorder",
+                                                        border:
+                                                            OutlineInputBorder(),
+                                                      ),
+                                                      onChanged:
+                                                          _changeWorkorder,
+                                                      showSearchBox: true,
+                                                      searchFieldProps:
+                                                          const TextFieldProps(
+                                                        cursorColor:
+                                                            Colors.blue,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                      ],
+                                    )
+                                  : Container(
+                                      // child: Text("Down"),
+                                      ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
                               Card(
                                 elevation: 10,
                                 child: Column(
@@ -232,6 +320,7 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                     const SizedBox(
                                       height: 30,
                                     ),
+                                    //open button Progress----------------
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           fixedSize: Size(
@@ -251,16 +340,33 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                                 .map((imageone) {
                                               return Container(
                                                   child: Card(
-                                                child: Container(
-                                                  height: 100,
-                                                  width: 100,
-                                                  child: Image.file(
-                                                      File(imageone.path)),
-                                                ),
-                                              ));
+                                                      child: Column(
+                                                children: [
+                                                  Container(
+                                                    height: 100,
+                                                    width: 100,
+                                                    child: Image.file(
+                                                        File(imageone.path)),
+                                                  ),
+                                                  const Positioned(
+                                                    right: 5.0,
+                                                    child: InkWell(
+                                                      child: Icon(
+                                                        Icons.remove_circle,
+                                                        size: 30,
+                                                        color: Colors.red,
+                                                      ),
+                                                      onTap: null,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )));
                                             }).toList(),
                                           )
-                                        : Container(),
+                                        : Container(
+                                            child:
+                                                const Text("No Image Selected"),
+                                          ),
                                     const SizedBox(
                                       height: 30,
                                     ),
@@ -305,7 +411,10 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                               ));
                                             }).toList(),
                                           )
-                                        : Container(),
+                                        : Container(
+                                            child:
+                                                const Text("No Image Selected"),
+                                          ),
                                     const SizedBox(
                                       height: 30,
                                     ),
@@ -350,7 +459,10 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                               ));
                                             }).toList(),
                                           )
-                                        : Container(),
+                                        : Container(
+                                            child:
+                                                const Text("No Image Selected"),
+                                          ),
                                     const SizedBox(
                                       height: 30,
                                     ),
@@ -395,7 +507,10 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                               ));
                                             }).toList(),
                                           )
-                                        : Container(),
+                                        : Container(
+                                            child:
+                                                const Text("No Image Selected"),
+                                          ),
                                     const SizedBox(
                                       height: 30,
                                     ),
@@ -440,7 +555,10 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                               ));
                                             }).toList(),
                                           )
-                                        : Container(),
+                                        : Container(
+                                            child:
+                                                const Text("No Image Selected"),
+                                          ),
                                     const SizedBox(
                                       height: 30,
                                     ),
@@ -485,7 +603,10 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                               ));
                                             }).toList(),
                                           )
-                                        : Container(),
+                                        : Container(
+                                            child:
+                                                const Text("No Image Selected"),
+                                          ),
                                     const SizedBox(
                                       height: 30,
                                     ),
@@ -531,7 +652,10 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                               ));
                                             }).toList(),
                                           )
-                                        : Container(),
+                                        : Container(
+                                            child:
+                                                const Text("No Image Selected"),
+                                          ),
                                     const SizedBox(
                                       height: 30,
                                     ),
@@ -560,6 +684,15 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
           ),
         ));
   }
+
+  // void selectImages() async {
+  //   final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
+  //   if (selectedImages!.isNotEmpty) {
+  //     imageFileList!.addAll(selectedImages);
+  //   }
+  //   print("Image List Length:" + imageFileList!.length.toString());
+  //   setState(() {});
+  // }
 
   void _newRecordDialog() {
     String _serialnumber = _serialNumberController.text;
@@ -590,6 +723,10 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
     } catch (e) {
       print("error while picking file.");
     }
+  }
+
+  _deleteImages() {
+    print("deleteImages");
   }
 
   openImagesSLD() async {
@@ -680,5 +817,73 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
     } catch (e) {
       print("error while picking file.");
     }
+  }
+
+  ///on add form
+  void onAddForm() {
+    setState(() {
+      text.add(workorderCount++);
+    });
+    print(workorderCount);
+  }
+
+  Future getWorkorder() async {
+    http.post(Uri.parse(MyConfig.server + "/find_workorder_by_project.php"),
+        body: {
+          "projectCode": widget.projectInfo.projectCode.toString(),
+        }).then((response) {
+      var jsonData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "Fetching Workorder",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        setState(() {
+          for (var i = 0; i < jsonData['project_data'].length; i++) {
+            _LWorkorder.add(
+                jsonData['project_data'][i]['WorkOrderNumber'].toString());
+          }
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
+    });
+  }
+
+  _changeWorkorder(String? workorder) async {
+    print(workorder);
+    print(MyConfig.server + "/find_workorder_categories_by_project.php");
+    http.post(
+        Uri.parse(
+            MyConfig.server + "/find_workorder_categories_by_project.php"),
+        body: {
+          "workorder": workorder.toString(),
+        }).then((response) {
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "Fetching Workorder",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        print(jsonData['project_data']);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+      }
+    });
   }
 }
