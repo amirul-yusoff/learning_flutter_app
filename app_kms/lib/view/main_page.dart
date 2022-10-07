@@ -6,6 +6,7 @@ import 'package:app_kms/view/member_page/member_list_page.dart';
 import 'package:app_kms/model/config.dart';
 import 'package:app_kms/view/profile_page/profile_page.dart';
 import 'package:app_kms/view/project_page/project_page_main.dart';
+import 'package:app_kms/view/report_page/po_report.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ndialog/ndialog.dart';
@@ -134,6 +135,51 @@ class _MainPageState extends State<MainPage> {
                                     Center(
                                         child: Icon(
                                       Icons.person,
+                                      size: 80,
+                                    )),
+                                  ],
+                                )),
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: Material(
+                            color: Colors.blue[100],
+                            elevation: 8,
+                            child: InkWell(
+                                highlightColor: Colors.yellow.withOpacity(0.3),
+                                splashColor: Colors.red.withOpacity(0.5),
+                                onTap: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //       builder: (context) =>
+                                  //           UserProfilePage(user: widget.user)),
+                                  // );
+                                  Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          type: PageTransitionType.scale,
+                                          duration: const Duration(seconds: 1),
+                                          alignment: Alignment.center,
+                                          child: purchaseOrderReport(
+                                              user: widget.user)));
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: const <Widget>[
+                                    SizedBox(height: 40),
+                                    Text(
+                                      "Report",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Center(
+                                        child: Icon(
+                                      Icons.report_sharp,
                                       size: 80,
                                     )),
                                   ],
