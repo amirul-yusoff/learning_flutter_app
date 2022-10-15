@@ -17,10 +17,10 @@ require_once('config.ini.php');
 	
 $employeeID = $_POST["employeeID"];
 $assetList = $pdo->prepare("SELECT a.* ,b.name
-FROM jtdbv1.model_has_roles a
+FROM model_has_roles a
 LEFT JOIN (
 select *
-FROM jtdbv1.roles)  b 
+FROM roles)  b 
 ON a.role_id = b.id 
 where model_id = ? ");
 $assetList->execute([$employeeID]);

@@ -17,9 +17,9 @@ require_once('config.ini.php');
 	$employeeCode = $_POST["employeeCode"];
 
 $projectQuery = $pdo->prepare("SELECT a.*
-FROM jtdbv1.project_registry a
+FROM project_registry a
 LEFT JOIN (
-SELECT project_code AS ProjectCodeFromProjectMember FROM jtdbv1.project_member WHERE employee_code=? AND 
+SELECT project_code AS ProjectCodeFromProjectMember FROM project_member WHERE employee_code=? AND 
 (is_pm1=1 OR is_pm2=1 OR is_pe1=1 OR is_pe2=1 OR is_se1=1 OR is_se2=1 OR is_hod=1 OR is_pd=1) 
 GROUP BY project_code)  b 
 ON a.Project_Code = b.ProjectCodeFromProjectMember 

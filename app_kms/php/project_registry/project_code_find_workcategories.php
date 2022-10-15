@@ -17,7 +17,7 @@ require_once('config.ini.php');
 	$workorder = $_POST["workorder"];
 
 $projectQuery = $pdo->prepare("SELECT *,sum(qty) AS sum_all_qty 
-FROM jtdbv1.work_order_categories_items  WHERE workorder = ? GROUP BY wo_category_short_name");
+FROM work_order_categories_items  WHERE workorder = ? GROUP BY wo_category_short_name");
 $projectQuery->execute([$workorder]);
 $count = $projectQuery->rowCount();
 $projectRows=[];
