@@ -17,37 +17,37 @@ require_once('config.ini.php');
 	
 
 $projectQuery = $pdo->prepare("SELECT *
-FROM jtdbv1.project_registry
+FROM  project_registry
 LEFT JOIN(
-    SELECT max(jtdbv1.project_member.project_member_id) as maxProjectMemeberID,jtdbv1.project_member.role, jtdbv1.project_member.project_code
-    FROM jtdbv1.project_member
-    where jtdbv1.project_member.role = 'Project Engineer'
-    group by jtdbv1.project_member.project_code DESC  
+    SELECT max( project_member.project_member_id) as maxProjectMemeberID, project_member.role,  project_member.project_code
+    FROM  project_member
+    where  project_member.role = 'Project Engineer'
+    group by  project_member.project_code DESC  
 )t2
-ON jtdbv1.project_registry.Project_Code = t2.project_code
-LEFT JOIN jtdbv1.project_member t1
+ON  project_registry.Project_Code = t2.project_code
+LEFT JOIN  project_member t1
 ON t2.maxProjectMemeberID = t1.project_member_id
 
 LEFT JOIN(
     SELECT max(id) as maxProjectEOTID ,project_id
-    FROM jtdbv1.project_eots
-    group by jtdbv1.project_eots.project_id DESC
+    FROM  project_eots
+    group by  project_eots.project_id DESC
 )t3
-ON jtdbv1.project_registry.Project_ID = t3.project_id
-LEFT JOIN jtdbv1.project_eots t4
+ON  project_registry.Project_ID = t3.project_id
+LEFT JOIN  project_eots t4
 ON t3.maxProjectEOTID = t4.id
 
 WHERE 
-(jtdbv1.project_registry.Project_Status = 'Work In Progress'
+( project_registry.Project_Status = 'Work In Progress'
 and t1.role = 'Project Engineer'
 and t1.status = 'Active'
-and jtdbv1.project_registry.Project_Commencement_Date != 'NULL'
-and jtdbv1.project_registry.Project_Commencement_Date != '0000-00-00'
-and jtdbv1.project_registry.Project_Close_Date != 'NULL'
-and jtdbv1.project_registry.Project_Close_Date != '0000-00-00'
-and jtdbv1.project_registry.Project_Close_Date <= DATE(NOW() + INTERVAL 3 MONTH))
+and  project_registry.Project_Commencement_Date != 'NULL'
+and  project_registry.Project_Commencement_Date != '0000-00-00'
+and  project_registry.Project_Close_Date != 'NULL'
+and  project_registry.Project_Close_Date != '0000-00-00'
+and  project_registry.Project_Close_Date <= DATE(NOW() + INTERVAL 3 MONTH))
 ORDER BY
-jtdbv1.project_registry.Project_Close_Date DESC");
+ project_registry.Project_Close_Date DESC");
 $projectQuery->execute();
 $count = $projectQuery->rowCount();
 if ($count > 0)

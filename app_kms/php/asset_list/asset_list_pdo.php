@@ -18,13 +18,13 @@ require_once('config.ini.php');
 $assetList = $pdo->prepare("SELECT a.id,a.device_name,a.description,a.serial_number,
 b.asset_id,b.assign_to,b.updated_at,
 c.employee_code,c.employee_name,c.id as members_tbl_id
-FROM jtdbv1.asset_list a 
+FROM asset_list a 
 left join (
 SELECT asset_id,assign_to,updated_at,id as asset_tbl_id
-FROM jtdbv1.asset_list_assign 
+FROM asset_list_assign 
 GROUP BY id DESC)  b 
  ON a.id = b.asset_id 
-LEFT JOIN jtdbv1.members c 
+LEFT JOIN members c 
  ON b.assign_to = c.id
 --   WHERE device_name = 'JTINHQLP00008'
 Group by asset_id");
