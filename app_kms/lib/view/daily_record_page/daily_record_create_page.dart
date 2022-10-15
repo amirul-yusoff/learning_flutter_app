@@ -11,7 +11,6 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:ndialog/ndialog.dart';
 
 class DailyRecordCreatePage extends StatefulWidget {
   final User user;
@@ -31,8 +30,8 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
   String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   final format = DateFormat("yyyy-MM-dd");
 
-  final TextEditingController _shiftController = TextEditingController();
   final TextEditingController _serialNumberController = TextEditingController();
+  final TextEditingController _workdoneQtyController = TextEditingController();
   final TextEditingController _siteActivitiesController =
       TextEditingController();
   List<String> _shiftSelection = <String>['Morning', 'Night'];
@@ -293,6 +292,72 @@ class _DailyRecordCreatePageState extends State<DailyRecordCreatePage> {
                                                         cursorColor:
                                                             Colors.blue,
                                                       ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    DataTable(
+                                                      columns: const <
+                                                          DataColumn>[
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Text(
+                                                              'Work\nCategories',
+                                                              style: TextStyle(
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Text(
+                                                              'Total\nQty',
+                                                              style: TextStyle(
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Text(
+                                                              'Accumulative\nQty',
+                                                              style: TextStyle(
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        DataColumn(
+                                                          label: Expanded(
+                                                            child: Text(
+                                                              'Today\nQty',
+                                                              style: TextStyle(
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                      rows: const <DataRow>[
+                                                        DataRow(
+                                                          cells: <DataCell>[
+                                                            DataCell(
+                                                                Text('Sarah')),
+                                                            DataCell(
+                                                                Text('19')),
+                                                            DataCell(Text(
+                                                                'Student')),
+                                                            DataCell(
+                                                                Text('asdasd')),
+                                                          ],
+                                                        ),
+                                                      ],
                                                     ),
                                                     const SizedBox(
                                                       height: 20,
