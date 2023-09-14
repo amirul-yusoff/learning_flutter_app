@@ -62,220 +62,60 @@ class _MainPageState extends State<MainPage> {
       rowcount = 3;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Main Menu',
-          style: Theme.of(context).textTheme.headline6,
-        ),
-        automaticallyImplyLeading: false,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/background.png'),
-            fit: BoxFit.cover,
+    return WillPopScope(
+      onWillPop: () async => false, // Disable back button navigation
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Main Menu',
+            style: Theme.of(context).textTheme.headline6,
           ),
+          automaticallyImplyLeading: false,
         ),
-        child: Center(
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              Flexible(
-                flex: 2,
-                child: Image.asset(
-                  'assets/images/main_page.png',
-                  scale: 1,
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/background.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Center(
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+                Flexible(
+                  flex: 2,
+                  child: Image.asset(
+                    'assets/images/main_page.png',
+                    scale: 1,
+                  ),
                 ),
-              ),
-              Flexible(
-                  flex: 8,
-                  child: GridView.count(
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: rowcount,
-                    children: [
-                      Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(40),
-                          child: Material(
-                            color: Colors.blue[100],
-                            elevation: 8,
-                            child: InkWell(
-                                highlightColor: Colors.yellow.withOpacity(0.3),
-                                splashColor: Colors.red.withOpacity(0.5),
-                                onTap: () {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //       builder: (context) =>
-                                  //           UserProfilePage(user: widget.user)),
-                                  // );
-                                  Navigator.push(
+                Flexible(
+                    flex: 8,
+                    child: GridView.count(
+                      padding: const EdgeInsets.all(20),
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: rowcount,
+                      children: [
+                        Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(40),
+                            child: Material(
+                              color: Colors.blue[100],
+                              elevation: 8,
+                              child: InkWell(
+                                  highlightColor:
+                                      Colors.yellow.withOpacity(0.3),
+                                  splashColor: Colors.red.withOpacity(0.5),
+                                  onTap: () {
+                                    Navigator.push(
                                       context,
                                       PageTransition(
                                           type: PageTransitionType.scale,
                                           duration: const Duration(seconds: 1),
                                           alignment: Alignment.center,
                                           child: UserProfilePage(
-                                              user: widget.user)));
-                                },
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: const <Widget>[
-                                    SizedBox(height: 40),
-                                    Text(
-                                      "Profile",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Center(
-                                        child: Icon(
-                                      Icons.person,
-                                      size: 80,
-                                    )),
-                                  ],
-                                )),
-                          ),
-                        ),
-                      ),
-                      if (itAssetMoudule)
-                        Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Material(
-                              color: Colors.blue[100],
-                              elevation: 8,
-                              child: InkWell(
-                                  highlightColor:
-                                      Colors.yellow.withOpacity(0.3),
-                                  splashColor: Colors.red.withOpacity(0.5),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AssetListPage(user: widget.user)),
-                                    );
-                                  },
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: const <Widget>[
-                                      SizedBox(height: 40),
-                                      Text(
-                                        "IT Asset",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Center(
-                                          child: Icon(
-                                        Icons.computer,
-                                        size: 80,
-                                      )),
-                                    ],
-                                  )),
-                            ),
-                          ),
-                        ),
-                      if (projectMoudule)
-                        Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Material(
-                              color: Colors.blue[100],
-                              elevation: 8,
-                              child: InkWell(
-                                  highlightColor:
-                                      Colors.yellow.withOpacity(0.3),
-                                  splashColor: Colors.red.withOpacity(0.5),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ProjectRegistryMainPage(
-                                                  user: widget.user)),
-                                    );
-                                  },
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: const <Widget>[
-                                      SizedBox(height: 40),
-                                      Text(
-                                        "Project",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Center(
-                                          child: Icon(
-                                        Icons.house,
-                                        size: 80,
-                                      )),
-                                    ],
-                                  )),
-                            ),
-                          ),
-                        ),
-                      if (dailyRecordMoudule)
-                        Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Material(
-                              color: Colors.blue[100],
-                              elevation: 8,
-                              child: InkWell(
-                                  highlightColor:
-                                      Colors.yellow.withOpacity(0.3),
-                                  splashColor: Colors.red.withOpacity(0.5),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              DailyRecordMainPage(
-                                                  user: widget.user)),
-                                    );
-                                  },
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: const <Widget>[
-                                      SizedBox(height: 40),
-                                      Text(
-                                        "Daily Record",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Center(
-                                          child: Icon(
-                                        Icons.construction_rounded,
-                                        size: 80,
-                                      )),
-                                    ],
-                                  )),
-                            ),
-                          ),
-                        ),
-                      if (membersMoudule)
-                        Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Material(
-                              color: Colors.blue[100],
-                              elevation: 8,
-                              child: InkWell(
-                                  highlightColor:
-                                      Colors.yellow.withOpacity(0.3),
-                                  splashColor: Colors.red.withOpacity(0.5),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MemberListPage(
                                               user: widget.user)),
                                     );
                                   },
@@ -284,14 +124,14 @@ class _MainPageState extends State<MainPage> {
                                     children: const <Widget>[
                                       SizedBox(height: 40),
                                       Text(
-                                        "Members",
+                                        "Profile",
                                         style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       Center(
                                           child: Icon(
-                                        Icons.groups_outlined,
+                                        Icons.person,
                                         size: 80,
                                       )),
                                     ],
@@ -299,56 +139,262 @@ class _MainPageState extends State<MainPage> {
                             ),
                           ),
                         ),
-                      Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(40),
-                          child: Material(
-                            color: Colors.blue[100],
-                            elevation: 8,
-                            child: InkWell(
-                                highlightColor: Colors.yellow.withOpacity(0.3),
-                                splashColor: Colors.red.withOpacity(0.5),
-                                onTap: () {
-                                  signOut();
-                                },
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: const <Widget>[
-                                    SizedBox(height: 40),
-                                    Text(
-                                      "Log Out",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Center(
-                                        child: Icon(
-                                      Icons.power_settings_new_sharp,
-                                      size: 80,
+                        if (itAssetMoudule)
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(40),
+                              child: Material(
+                                color: Colors.blue[100],
+                                elevation: 8,
+                                child: InkWell(
+                                    highlightColor:
+                                        Colors.yellow.withOpacity(0.3),
+                                    splashColor: Colors.red.withOpacity(0.5),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => AssetListPage(
+                                                user: widget.user)),
+                                      );
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: const <Widget>[
+                                        SizedBox(height: 40),
+                                        Text(
+                                          "IT Asset",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Center(
+                                            child: Icon(
+                                          Icons.computer,
+                                          size: 80,
+                                        )),
+                                      ],
                                     )),
-                                  ],
-                                )),
+                              ),
+                            ),
+                          ),
+                        if (projectMoudule)
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(40),
+                              child: Material(
+                                color: Colors.blue[100],
+                                elevation: 8,
+                                child: InkWell(
+                                    highlightColor:
+                                        Colors.yellow.withOpacity(0.3),
+                                    splashColor: Colors.red.withOpacity(0.5),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProjectRegistryMainPage(
+                                                    user: widget.user)),
+                                      );
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: const <Widget>[
+                                        SizedBox(height: 40),
+                                        Text(
+                                          "Project",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Center(
+                                            child: Icon(
+                                          Icons.house,
+                                          size: 80,
+                                        )),
+                                      ],
+                                    )),
+                              ),
+                            ),
+                          ),
+                        if (dailyRecordMoudule)
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(40),
+                              child: Material(
+                                color: Colors.blue[100],
+                                elevation: 8,
+                                child: InkWell(
+                                    highlightColor:
+                                        Colors.yellow.withOpacity(0.3),
+                                    splashColor: Colors.red.withOpacity(0.5),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DailyRecordMainPage(
+                                                    user: widget.user)),
+                                      );
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: const <Widget>[
+                                        SizedBox(height: 40),
+                                        Text(
+                                          "Daily Record",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Center(
+                                            child: Icon(
+                                          Icons.construction_rounded,
+                                          size: 80,
+                                        )),
+                                      ],
+                                    )),
+                              ),
+                            ),
+                          ),
+                        if (membersMoudule)
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(40),
+                              child: Material(
+                                color: Colors.blue[100],
+                                elevation: 8,
+                                child: InkWell(
+                                    highlightColor:
+                                        Colors.yellow.withOpacity(0.3),
+                                    splashColor: Colors.red.withOpacity(0.5),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                MemberListPage(
+                                                    user: widget.user)),
+                                      );
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: const <Widget>[
+                                        SizedBox(height: 40),
+                                        Text(
+                                          "Members",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Center(
+                                            child: Icon(
+                                          Icons.groups_outlined,
+                                          size: 80,
+                                        )),
+                                      ],
+                                    )),
+                              ),
+                            ),
+                          ),
+                        Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(40),
+                            child: Material(
+                              color: Colors.blue[100],
+                              elevation: 8,
+                              child: InkWell(
+                                  highlightColor:
+                                      Colors.yellow.withOpacity(0.3),
+                                  splashColor: Colors.red.withOpacity(0.5),
+                                  onTap: () {
+                                    signOut();
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: const <Widget>[
+                                      SizedBox(height: 40),
+                                      Text(
+                                        "Log Out",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Center(
+                                          child: Icon(
+                                        Icons.power_settings_new_sharp,
+                                        size: 80,
+                                      )),
+                                    ],
+                                  )),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ))
-            ],
+                      ],
+                    ))
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  //signout function
-  signOut() async {
-    ProgressDialog progressDialog = ProgressDialog(context,
-        message: const Text("Please wait.."), title: const Text("Log Out"));
-    progressDialog.show();
+  // Sign out function
+  void signOut() async {
+    bool confirmed = await _showLogoutConfirmationDialog(context);
+    if (confirmed) {
+      ProgressDialog progressDialog = ProgressDialog(
+        context,
+        message: const Text("Please wait.."),
+        title: const Text("Log Out"),
+      );
+      progressDialog.show();
+
+      await _performLogout(); // Simulate logout process
+
+      progressDialog.dismiss();
+
+      // Navigate to the LoginPage and remove all the routes from the stack
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
+
+  // Function to show logout confirmation dialog
+  Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+          context: context,
+          barrierDismissible:
+              false, // User must tap buttons to close the dialog
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Log Out"),
+              content: const Text("Are you sure you want to log out?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text("Log Out"),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Return false if the user dismisses the dialog without making a choice
+  }
+
+  // Simulate logout process
+  Future<void> _performLogout() async {
     await Future.delayed(const Duration(seconds: 2));
-    progressDialog.dismiss();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const LoginPage()));
+    // Add your actual logout logic here
   }
 
   Future _checkPermission() async {

@@ -1,8 +1,7 @@
 import 'dart:io';
 
+import 'package:app_kms/view/login_page.dart';
 import 'package:flutter/material.dart';
-
-import 'view/splash_page.dart';
 
 // void main() => runApp(const MyApp());
 void main() {
@@ -38,9 +37,7 @@ class MyApp extends StatelessWidget {
       ),
       // darkTheme: ThemeData.dark(),
       title: 'App KMS',
-      home: const Scaffold(
-        body: SplashPage(),
-      ),
+      home: const LoginPage(),
     );
   }
 }
